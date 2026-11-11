@@ -1,0 +1,6 @@
+# 本项目核心零第三方依赖（仅用 Python 标准库）。
+# Render 需要 requirements.txt 存在。
+
+# 可选依赖：云端语音合成（解决移动端无中文语音包问题）
+# 安装：pip install edge-tts
+edge-tts>=6.1.0

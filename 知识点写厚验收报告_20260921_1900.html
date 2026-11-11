@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AL 自学系统 · 知识点写厚验收报告</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1c2333; --sub:#5b6579; --line:#e4e8f2;
+    --ok:#0f9d58; --warn:#e8a33d; --accent:#635bff; --accent2:#00b8d9;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:34px 20px 60px; background:
+      radial-gradient(1100px 520px at 8% -10%, #e5e9ff 0%, transparent 60%),
+      radial-gradient(900px 460px at 100% 0%, #dff6fb 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px; margin:0 auto}
+  .hero{
+    background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.72));
+    border:1px solid rgba(255,255,255,.9); border-radius:20px; padding:26px 30px;
+    box-shadow:0 12px 34px rgba(28,35,51,.09), inset 0 1px 0 #fff;
+    backdrop-filter:blur(12px);
+  }
+  .hero h1{margin:0 0 6px; font-size:26px; letter-spacing:-.3px}
+  .hero .meta{color:var(--sub); font-size:13.5px}
+  .badge{
+    display:inline-block; margin-left:8px; padding:2px 11px; border-radius:999px;
+    font-size:12.5px; font-weight:700; color:#fff;
+    background:linear-gradient(135deg,var(--ok),#12b76a);
+  }
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:22px 0}
+  .kpi{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
+    box-shadow:0 4px 16px rgba(28,35,51,.05);
+  }
+  .kpi .n{font-size:30px; font-weight:800; letter-spacing:-1px; line-height:1.15}
+  .kpi .n.g{color:var(--ok)} .kpi .n.a{color:var(--accent)}
+  .kpi .l{font-size:12.5px; color:var(--sub); margin-top:3px}
+  .kpi .d{font-size:11.5px; color:#98a2b3; margin-top:6px}
+  h2{font-size:17px; margin:30px 0 12px; padding-left:11px; border-left:4px solid var(--accent)}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:6px 4px;
+    box-shadow:0 4px 16px rgba(28,35,51,.05); overflow:hidden;
+  }
+  table{width:100%; border-collapse:collapse; font-size:13.5px}
+  th{background:#f7f9fd; text-align:left; padding:11px 14px; font-size:12.5px; color:var(--sub);
+     font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap}
+  td{padding:10px 14px; border-bottom:1px solid #f0f3fa; vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .tag{display:inline-block; padding:1.5px 9px; border-radius:6px; font-size:11.5px; font-weight:700}
+  .t-ok{background:#e7f7ee; color:#0b7a45}
+  .t-run{background:#fff2dc; color:#9a6512}
+  .mono{font-family:Consolas,Menlo,monospace; font-size:12px; color:#4b5565}
+  ul{margin:8px 0 0; padding-left:20px} li{margin:5px 0}
+  .note{
+    background:#fff8ec; border:1px solid #f6e0b8; border-radius:14px; padding:14px 18px;
+    font-size:13.5px; color:#7a5514;
+  }
+  .note2{
+    background:#eef1ff; border:1px solid #d9dfff; border-radius:14px; padding:14px 18px;
+    font-size:13.5px; color:#3b3d8f;
+  }
+  footer{margin-top:34px; text-align:center; color:#98a2b3; font-size:12px}
+  @media (max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>AL 自学系统 · 知识点写厚验收报告<span class="badge">T = 0 全部完成</span></h1>
+    <div class="meta">
+      任务：把全部课程讲解写厚到 ≥650 字（目标 800–1000 字），严格六段模板，由在线模型直接生成落盘，不依赖 Ollama<br>
+      本次运行：2026-09-21 19:00 自动接力 &nbsp;·&nbsp; 工作目录：<span class="mono">D:\我的作品\自学系统\AL-Learning-System</span>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n g">100 → 0</div><div class="l">仍薄条目 T</div><div class="d">本次入口 T=100，出口 T=0</div></div>
+    <div class="kpi"><div class="n a">60</div><div class="l">本次亲手写厚条目</div><div class="d">数学 G7 / G8 / G10 / G11 / G12</div></div>
+    <div class="kpi"><div class="n">1040</div><div class="l">课程子点总数</div><div class="d">全部达标，达标率 100%</div></div>
+    <div class="kpi"><div class="n">1343</div><div class="l">题目总数（未改动）</div><div class="d">questions 零增删</div></div>
+  </div>
+
+  <h2>一、本次处理的切片（60 条）</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>切片</th><th>知识模块</th><th>条数</th><th>长度区间</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>数学 · 七年级下</td><td>二元一次方程组（代入消元法）</td><td>1</td><td class="mono">1013</td><td><span class="tag t-ok">达标</span></td></tr>
+        <tr><td>数学 · 八年级上</td><td>三角形（角平分线）、分式（意义/乘除/加减/分式方程/实际应用）</td><td>10</td><td class="mono">822–1104</td><td><span class="tag t-ok">达标</span></td></tr>
+        <tr><td>数学 · 高一必修一/二</td><td>集合与逻辑、一元二次与基本不等式、函数概念与性质、立体几何、统计、概率、平面向量</td><td>24</td><td class="mono">883–1142</td><td><span class="tag t-ok">达标</span></td></tr>
+        <tr><td>数学 · 高二选修</td><td>导数应用、计数原理、随机变量与分布列、期望方差、二项分布、正态分布</td><td>13</td><td class="mono">932–1209</td><td><span class="tag t-ok">达标</span></td></tr>
+        <tr><td>数学 · 高三高考综合</td><td>概率统计（分布列/期望/回归相关/建模）、数列求和与三角综合、套卷与应试策略</td><td>12</td><td class="mono">814–1085</td><td><span class="tag t-ok">达标</span></td></tr>
+        <tr><td colspan="2"><strong>合计</strong></td><td><strong>60</strong></td><td class="mono">814 – 1209（均值 1000）</td><td><span class="tag t-ok">全部达标</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>二、硬校验结果（脚本复核，不信自述）</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>校验项</th><th>标准</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr><td>仍薄条目 T</td><td>= 0</td><td><strong style="color:#0f9d58">0 ✅</strong></td></tr>
+        <tr><td>长度</td><td>每条 ≥ 650 字</td><td>60/60 通过，最短 814、最长 1209、均值 1000 ✅</td></tr>
+        <tr><td>六段模板</td><td>含【一句话懂】与【一句小结】</td><td>60/60 通过，模板完整率 100% ✅</td></tr>
+        <tr><td>键精确匹配</td><td>(course_id, sub) 与主文件一字不差</td><td>60/60 匹配，无回退模板 ✅</td></tr>
+        <tr><td>落盘一致性</td><td>patch 内容 == 主文件内容</td><td>60/60 完全一致 ✅</td></tr>
+        <tr><td>questions 完整性</td><td>不改、不删、不新增</td><td>总题目数 1343，脚本仅赋值 content 字段 ✅</td></tr>
+        <tr><td>离线副本同步</td><td>static/offline/lessons 与主文件一致</td><td>涉及 17 门课程，异常 0 ✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>三、子任务限流情况（如实说明）</h2>
+  <div class="note">
+    <strong>按规程只启动了 2 个后台子任务（严禁 10+ 并发），但仍在约 1 秒内双双报 429</strong>，
+    新的配额重置时间为 22:07。据此判断：本机子任务通道仍受账号用量配额限制，<strong>低并发也无法规避</strong>，
+    已按协议<strong>停止派发、不重试、不刷额度</strong>。
+    <br><br>
+    同时观察到 <span class="mono">tools/</span> 目录下有<strong>另一个并发写入进程</strong>在同时工作
+    （写 <span class="mono">_gen_g8a.py / _gen_g9a.py / _gen_g9b.py</span>），它补齐了 <strong>G8 / G9 / G12-u1~u3</strong>。
+    两者并行是安全的：各自只写自己的 patch 文件，<span class="mono">merge_patches.py</span> 每次全量重放所有补丁，
+    因此不存在互相覆盖、内容丢失的问题。
+    <br><br>
+    <strong>因此本次的推进路径是：</strong>主会话亲手写 60 条（不受限）+ 并发进程补齐其余 —— 两条通道合起来把 T 从 100 打到 0。
+  </div>
+
+  <h2>四、全局进度总览</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>学科 / 板块</th><th>状态</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>语文 一~六年级</td><td><span class="tag t-ok">已完成</span></td><td>此前各轮手写清零</td></tr>
+        <tr><td>数学 一~六年级</td><td><span class="tag t-ok">已完成</span></td><td>此前各轮清零</td></tr>
+        <tr><td>数学 七~九年级</td><td><span class="tag t-ok">已完成</span></td><td>本次 + 并发进程补齐</td></tr>
+        <tr><td>数学 高一~高三</td><td><span class="tag t-ok">已完成</span></td><td>本次亲手写 49 条 + 并发补齐</td></tr>
+        <tr><td>英语 三~四年级</td><td><span class="tag t-ok">已完成</span></td><td>此前批次完成</td></tr>
+        <tr><td>网络安全（sec-1~12）</td><td><span class="tag t-ok">已完成</span></td><td>白帽防御视角，含法律边界</td></tr>
+        <tr><td>拓展与素养（9 模块）</td><td><span class="tag t-ok">已完成</span></td><td>记忆方法／珠心算／象棋／围棋／军棋等</td></tr>
+        <tr><td><strong>合计</strong></td><td><span class="tag t-ok">1040 / 1040</span></td><td><strong>T = 0，达标率 100%</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>五、遗留事项</h2>
+  <div class="note2">
+    <ul>
+      <li><strong>无需重启服务</strong>：<span class="mono">curriculum_gen.json</span> 为热加载，网页/平板刷新即见新内容。</li>
+      <li><strong>离线 APK 需重新打包</strong>：<span class="mono">static/offline/lessons</span> 已同步，但已编译的
+        <span class="mono">app-release.apk</span> 内仍含旧文本，若要 APK 内知识同步，需重跑
+        <span class="mono">prep_apk.py</span> 后重新构建。</li>
+      <li><strong>本自动化任务已可停止</strong>：目标 T = 0 已达成，无需再触发；若日后新增课程导致 T &gt; 0，重启同一流程即可。</li>
+    </ul>
+  </div>
+
+  <footer>AL 自学系统 · 知识点写厚验收报告 · 2026-09-21 19:00 自动接力运行 · 数据源 curriculum_gen.json</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "AL自学系统",
+  "short_name": "AL自学",
+  "description": "苏格拉底式AI个性化学习平台（K12课程+拓展素养）",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {"src":"/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"/icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

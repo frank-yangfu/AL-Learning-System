@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识点正确性自检验收报告</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#1c2233;--muted:#7b849b;--line:#e6e9f2;
+--ok:#0f9d58;--red:#d93025;--blue:#1a73e8;--soft:#f0f3fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:34px 22px 60px}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:.5px}
+.sub-t{color:var(--muted);font-size:13.5px;margin-bottom:22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin-bottom:26px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .n{font-size:24px;font-weight:700;line-height:1.2}
+.kpi .t{color:var(--muted);font-size:12.5px;margin-top:3px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+padding:20px 22px;margin-bottom:20px}
+h2{font-size:17px;margin:0 0 14px;padding-left:10px;border-left:4px solid var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:10px 9px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:var(--soft);font-weight:600;color:#48506b;font-size:12.5px;white-space:nowrap}
+td.c{text-align:center;white-space:nowrap}
+td.nm{font-weight:600;white-space:nowrap}
+td.ds{color:#4a5270;font-size:12.8px;line-height:1.6}
+.muted{color:var(--muted)}
+.red{color:var(--red)}
+.tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:600}
+.tag.ok{background:#e6f4ea;color:var(--ok)}
+.tag.bad{background:#fce8e6;color:var(--red)}
+.fix{border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:11px;background:#fcfdff}
+.fxh{margin-bottom:8px}
+.cid{font-family:ui-monospace,Menlo,Consolas,monospace;background:#eef1f8;border-radius:6px;
+padding:1px 7px;font-size:12.5px;margin-right:8px}
+.sub{font-weight:600;font-size:13.5px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 4px}
+.cmp>div{padding:9px 11px;border-radius:9px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.cmp .b{background:#fdecea;color:#9c2b22;text-decoration:line-through}
+.cmp .a{background:#e8f5ec;color:#0b6b3a}
+.lbl{display:inline-block;font-size:11.5px;font-weight:700;opacity:.72;margin-right:8px;
+font-family:inherit;text-decoration:none}
+.why{color:#5b6379;font-size:12.8px;margin-top:2px}
+ul{margin:6px 0 0;padding-left:20px}
+li{margin-bottom:9px;font-size:13px}
+li code{background:#eef1f8;border-radius:5px;padding:1px 6px;font-size:12.5px}
+.sm{color:var(--muted);font-size:12.3px;line-height:1.6}
+.note{background:#fff9e6;border:1px solid #f5e2a8;border-radius:11px;padding:14px 16px;
+font-size:13.4px;color:#6b5a1d}
+.foot{color:var(--muted);font-size:12.5px;text-align:center;margin-top:26px}
+</style></head><body><div class="wrap">
+<h1>🧪 知识点正确性自检验收报告</h1>
+<div class="sub-t">AL 自学系统 · 全库 274 课程 / 1040 子点 / 1485 题 · 生成于 2026-09-22 19:05</div>
+
+<div class="cards">
+<div class="kpi"><div class="n">6</div><div class="t">检查项</div></div>
+<div class="kpi"><div class="n" style="color:var(--red)">3</div><div class="t">查出并修复的硬伤</div></div>
+<div class="kpi"><div class="n" style="color:var(--ok)">0</div><div class="t">修复后残留错误</div></div>
+<div class="kpi"><div class="n">2,600+</div><div class="t">实际比对的等式/换算式</div></div>
+<div class="kpi"><div class="n">1040/1040</div><div class="t">九段模板齐全</div></div>
+<div class="kpi"><div class="n">998</div><div class="t">离线副本零漂移</div></div>
+</div>
+
+<div class="card">
+<h2>一、六项检查结果（修复后复检）</h2>
+<div class="sm" style="margin-bottom:10px">本次共查出并修复 <b>3</b> 处硬伤：
+其中 <b>1</b> 处由脚本直接命中，<b>2</b> 处是在被判为「误区举例」的候选里
+人工复核时发现并确认的（脚本把它们当成了故意写错）。
+下表为修复后的复检结果。</div>
+<table>
+<thead><tr><th>检查项</th><th>检查内容</th><th>覆盖量</th>
+<th>真错误</th><th>误区举例</th><th>结论</th></tr></thead>
+<tbody><tr><td class='nm'>CHECK 1 符号算式硬校验</td><td class='ds'>整式解析求值（Fraction 精确），覆盖分数、连等式、全角运算符、带单位</td><td>解析 763 个（跳过不可比对 2717 个）</td><td class='c'><b>0</b></td><td class='c muted'>9</td><td class='c'><span class='tag ok'>通过</span></td></tr><tr><td class='nm'>CHECK 2 中文算式还原校验</td><td class='ds'>把「5加-3等于2」「4乘-2加6等于-2」这类汉字算式还原成符号后同样求值</td><td>还原后可判定 763 处</td><td class='c'><b>0</b></td><td class='c muted'>9</td><td class='c'><span class='tag ok'>通过</span></td></tr><tr><td class='nm'>CHECK 3 公式口径</td><td class='ds'>三角形/梯形面积、圆周长面积、圆锥体积等定义式是否写错（漏 ÷2、漏 2πr 的 2、漏 1/3）</td><td>核到定义式 11 处</td><td class='c'><b>0</b></td><td class='c muted'>—</td><td class='c'><span class='tag ok'>通过</span></td></tr><tr><td class='nm'>CHECK 4 英语不规则变形</td><td class='ds'>「X 的过去式/过去分词/第三人称单数/复数 = Y」与内置词表比对</td><td>核对 7 处断言</td><td class='c'><b>0</b></td><td class='c muted'>—</td><td class='c'><span class='tag ok'>通过</span></td></tr><tr><td class='nm'>CHECK 5 成语/词语错别字</td><td class='ds'>48 组常错成语（迫不及待、一如继往、按步就班…）扫描，并识别「故意教错形」</td><td>命中 0 条</td><td class='c'><b>0</b></td><td class='c muted'>—</td><td class='c'><span class='tag ok'>通过</span></td></tr><tr><td class='nm'>CHECK 6 单位换算表校验</td><td class='ds'>长度/面积/体积/质量/时间/货币 六维换算表，按基准单位折算比对</td><td>核到独立换算式 105 个（跳过复合单位 5 个）</td><td class='c'><b>0</b></td><td class='c muted'>3</td><td class='c'><span class='tag ok'>通过</span></td></tr></tbody></table>
+<div class="sm" style="margin-top:10px">「误区举例」：讲义里
+为了说明错误而故意写错的算式（如「写成 9×7＝70，
+漏了减 7」「以为 1千米=100米，实际是 1000 米」），
+属正常讲解，不算错。检查器已按上下文自动区分。</div>
+</div>
+
+<div class="card">
+<h2>二、修复明细（3 处，前后对比）</h2>
+<div class='fix'><div class='fxh'><span class='cid'>pe-math-g3-u4</span><span class='sub'>口算乘法</span></div><div class='cmp'><div class='b'><span class='lbl'>修前</span>12×3 拆成 10×3+2×3=30+6=42</div><div class='a'><span class='lbl'>修后</span>12×3 拆成 10×3+2×3=30+6=36</div></div><div class='why'>原因：12×3=36，原写 42（与同课「一本书12元买3本=36元」自相矛盾）</div></div><div class='fix'><div class='fxh'><span class='cid'>pe-math-g3-u4</span><span class='sub'>口算乘法</span></div><div class='cmp'><div class='b'><span class='lbl'>修前</span>难在 2×3＝12 这种基础乘法不熟</div><div class='a'><span class='lbl'>修后</span>难在 2×3＝6 这种基础乘法不熟</div></div><div class='why'>原因：2×3=6，原写 12（对照「快速掌握」里的 2×3＝6）</div></div><div class='fix'><div class='fxh'><span class='cid'>pe-math-g6-u1</span><span class='sub'>整数乘法运算律</span></div><div class='cmp'><div class='b'><span class='lbl'>修前</span>12÷3+12÷1=7</div><div class='a'><span class='lbl'>修后</span>12÷3+12÷1=16</div></div><div class='why'>原因：12÷3=4、12÷1=12，相加为 16，原写 7</div></div>
+</div>
+
+<div class="card">
+<h2>三、一例：检查器不会把「故意写错」当成错误</h2>
+<ul><li><code>pe-math-g1-u8</code> · 解决问题 · <b>9＋6＝16</b><div class='sm'>，问的却是“还差几个”。二是算式列对了但计算错，凑十时拆错了数。三是忘写单位，或者单位写错。四是算完不检查，“9＋6＝16”这种错也没察觉；记住9加几得数的个位比原来那个数少1。 【本课重点】① 进位加法的解决问题，就是把"有两部分…</div></li><li><code>pe-math-g2-u6</code> · 9 的口诀 · <b>9×7＝70</b><div class='sm'>八十一”记成别的数。三是手指法用错手或弯错根数，要记住“弯下第几根，左边就是十位”。四是藏十法算完忘了减，写成9×7＝70，漏了减7这一步。 【本课重点】① 9的乘法口诀：一九得九、二九十八、三九二十七、四九三十六、五九四十五、六九…</div></li><li><code>pe-math-g3-u4</code> · 进位乘法 · <b>19×5＝45</b><div class='sm'>本课最大的坑。破解：进位时在高一位数字上方写个小数字或点，乘完立刻加上。⚠️ 难在最后一位乘完的进位丢掉，例如19×5＝45，十位1×5＝5加进位的4＝9，前面再没有位，要直接写在最高位。破解：算完检查"还有没有没处理的进位数"。⚠️…</div></li><li><code>pe-math-g3-u6</code> · 简单加减 · <b>1/5＋2/5＝3/10</b><div class='sm'>数。④ 结果能化简的可以写成更简单的形式（三年级只需理解不强调）。 【本课难点】⚠️ 难在把分母也加起来，算成1/5＋2/5＝3/10。破解：用图看——5格涂1格再加2格，一共涂3格，格子还是5格，分母当然不变。⚠️ 难在减法算完分母写错或分子…</div></li></ul>
+</div>
+
+<div class="card">
+<h2>四、方法论与已知盲区</h2>
+<div class="note">
+<b>为什么旧版检查器不能直接用：</b>
+旧版只匹配「a 运算符 b = c」单个式子，
+会把分数式截断（<code>2/5＋2/5＝4/5</code> 误读成 <code>2/5＝4</code>）、
+连等式切段（<code>4＋3－1＝6</code> 误读成 <code>3－1＝6</code>），
+虽然报了 192 条，却几乎全是假阳性。
+新版改为「极大片段整体解析」：把等号两侧能连成一个完整表达式的部分整段取出来，
+用分数精确求值，192 条虚报降到 1 条真错。
+</div>
+<div style="margin-top:12px"><b>已加的过滤器（避免误报）：</b>
+除式带余数 <code>350÷48＝7……14</code>、
+循环小数省略号 <code>1÷3＝0.333…</code>、
+变量方程 <code>x−3＝5</code>、根号 <code>√(16+9)=5</code>、
+百分号 <code>30/2000=1.5%</code>、时间角度混合单位 <code>8时20分＋40分＝9时</code>、
+带分数 <code>2又1/3＝7/3</code>、复合单位 <code>3米5分米=300厘米+50厘米</code>。
+</div>
+<div class="note" style="margin-top:12px;background:#eef4ff;border-color:#c9dbff;color:#25406b">
+<b>仍然无法自动化的盲区（需人工）：</b>
+① 纯文字断言型错误（如「三角形内角和是 360 度」没有等式）；
+② 需领域知识才能判对错的（中医穴位功效、语文作者年代、历史年份）；
+③ 图形题、几何证明过程中的逻辑跳步；
+④ 英语拼写与音标细节。
+这四类建议在新增讲义时由人工抽查，或后续接入模型审校。
+</div>
+</div>
+
+<div class="foot">AL 自学系统 · 知识点正确性自检 · 工具 tools/_audit_knowledge.py</div>
+</div></body></html>

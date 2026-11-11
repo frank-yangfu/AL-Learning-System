@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<title>学习进度持久化修复 · 验收报告 · 2026-11-11</title>
+<style>
+body{font-family:-apple-system,'Microsoft YaHei',sans-serif;max-width:960px;margin:32px auto;padding:0 20px;color:#1f2937;line-height:1.75;background:#fafafa}
+h1{font-size:23px;border-left:5px solid #059669;padding-left:12px}
+h2{font-size:18px;margin-top:30px;color:#047857}
+table{border-collapse:collapse;width:100%;margin:12px 0;background:#fff}
+th,td{border:1px solid #e5e7eb;padding:9px 12px;font-size:14px;text-align:left;vertical-align:top}
+th{background:#ecfdf5}
+.ok{color:#059669;font-weight:700}.bad{color:#dc2626;font-weight:700}.warn{color:#b45309;font-weight:700}
+code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:13px}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 18px;margin:14px 0}
+pre{background:#1f2937;color:#e5e7eb;padding:12px;border-radius:8px;font-size:12.5px;overflow-x:auto}
+</style></head><body>
+<h1>💾 学习进度持久化 &amp; 账号绑定 · 验收报告</h1>
+<p>日期：2026-11-11 · 提问：「学习进度的功能是否正常？账号管理和学习进度要匹配，不能下一次登录学习进度就没了」</p>
+
+<h2>结论先说</h2>
+<table>
+<tr><th>项目</th><th>修复前</th><th>修复后</th></tr>
+<tr><td>下次登录进度还在吗</td><td class="bad">❌ 会丢（进度只存浏览器本地）</td><td class="ok">✅ 不丢（存服务端，登录自动拉回）</td></tr>
+<tr><td>换设备/清缓存</td><td class="bad">❌ 全部归零</td><td class="ok">✅ 重新登录即恢复</td></tr>
+<tr><td>多个孩子会不会串号</td><td class="bad">❌ 共用一份本地数据</td><td class="ok">✅ 每人独立账号 + 独立数据</td></tr>
+<tr><td>连续刷新会不会打挂</td><td class="bad">❌ 十几次后限流 → 桌面空白</td><td class="ok">✅ 连刷 14 次 0 失败</td></tr>
+</table>
+
+<h2>一、查到的问题（都是真的）</h2>
+<div class="box">
+<p><b>问题 1 · 知识点进度只存在本地</b><br>
+<code>al_ss_progress</code>（已学/已掌握）和 <code>al_stories_v1</code>（阅读进度）只写 <code>localStorage</code>，
+服务端根本没有对应表。清缓存、换设备、换浏览器 → 进度归零。</p>
+<p><b>问题 2 · 多个孩子共用一份数据</b><br>
+这三个 key 是全局的，不区分孩子。切换孩子时旧数据不清理 → 哥哥的进度会显示在弟弟的界面里。</p>
+<p><b>问题 3 · 自动登录把限流额度耗光（最隐蔽）</b><br>
+每次打开都要先打 <code>/api/register</code> 再 fallback 到 <code>/api/login</code>。
+对已存在的账号，register 返回 409 <b>但仍然占用 1 次鉴权限流额度</b>（60 秒 10 次）。
+连续刷新十几次就 429 → 拿不到 token → 所有需要登录的接口 401 → <b>桌面静默空白、进度看起来「没了」</b>。</p>
+<p><b>问题 4 · 学伴查错了表名</b><br>
+上一轮新增的学伴代码查询 <code>time_log</code>，实际表名是 <code>learning_log</code>，导致今日学习时长恒为 0。</p>
+</div>
+
+<h2>二、修复方案</h2>
+<table><tr><th>层面</th><th>改动</th></tr>
+<tr><td>数据表</td><td>新增 <code>study_records(user_id, course_id, status, updated_at)</code>，UNIQUE(user_id, course_id)</td></tr>
+<tr><td>接口</td><td><code>GET /api/study/records</code> 拉取；<code>POST /api/study/records</code> 上传（<b>只增不减</b>，status 取大值，防止旧设备覆盖新进度）</td></tr>
+<tr><td>写入策略</td><td>本地立即生效（离线可用）+ 400ms 防抖上云，失败标记待补传</td></tr>
+<tr><td>读取策略</td><td>登录后 / 进自学页 / 切孩子后，服务端记录合并回本地（取状态高者），离线增量自动补传</td></tr>
+<tr><td>阅读进度</td><td>复用同一张表，key 前缀 <code>story:&lt;id&gt;</code></td></tr>
+<tr><td>账号隔离</td><td><code>bindAccount()</code>：切账号前把 <code>al_ss_progress / al_resume_v1 / al_stories_v1</code> 打包进 <code>al_scope_&lt;账号&gt;</code>，再清空、再还原</td></tr>
+<tr><td>登录顺序</td><td>用 <code>al_reg_&lt;账号&gt;</code> 记住「已注册过」，下次直接 login；遇限流立即停止重试</td></tr>
+<tr><td>学伴</td><td><code>time_log</code> → <code>learning_log</code> 表名修正</td></tr>
+</table>
+
+<h2>三、实测验证（无头浏览器真实跑）</h2>
+<h3>1) 清空本地后能否找回</h3>
+<pre>[A] account: child_持久娃28439
+[B] account: child_持久娃28439 | SAME: true
+[B] restored progress: {"pe-lang-g1-u1":{"status":2,...},"pe-lang-g1-u2":{"status":1,...}}</pre>
+<p class="ok">✅ 删掉 token 和本地进度后重新进入，同一个账号，两个知识点都回来了。</p>
+
+<h3>2) 多孩子隔离</h3>
+<pre>[哥哥] account: child_哥哥46765 | progress: {"MATH-X":{"status":2}}
+[弟弟] account: child_弟弟46765 | DIFFERENT ACCOUNT: true
+[弟弟] progress: null
+[切回哥哥] account: child_哥哥46765 | SAME AS BEFORE: true
+[切回哥哥] progress: {"MATH-X":{"status":2}}</pre>
+<p class="ok">✅ 两个孩子的账号不同、数据互不干扰，切回后各自恢复。</p>
+
+<h3>3) 浏览器完全重启后重登</h3>
+<pre>[第1次打开] 账号: child_重登娃68513 | 有token: true
+[第2次打开] 自动登录账号: child_重登娃68513 | 与上次同一账号: true
+[第2次打开] 进度是否被找回: {"RECT-1":{"status":2},"RECT-2":{"status":1}}</pre>
+<p class="ok">✅ 关掉浏览器、本地无 token 无进度，重新打开照样自动登录同一账号并找回进度。</p>
+
+<h3>4) 连续刷新压力测试</h3>
+<pre>首次登录账号: child_刷新娃38799
+连续刷新 14 次，失败次数: 0
+账号始终一致: true</pre>
+<p class="ok">✅ 连刷 14 次全部成功登录，桌面正常渲染，账号不变。</p>
+
+<h3>5) 学习机功能回归</h3>
+<pre>tiles: 8 | actions: ▶继续学习 | 📖学新课 | ✏️随便练练
+companion active: true | fab back: true | page errors: 0</pre>
+<p class="ok">✅ 上一轮的学习机模式没有被破坏，0 条 JS 报错。</p>
+
+<h2>四、现在各类进度都存在哪</h2>
+<table><tr><th>数据</th><th>存储位置</th><th>跨设备</th></tr>
+<tr><td>知识点已学 / 已掌握</td><td>服务端 <code>study_records</code>（本地只做缓存）</td><td class="ok">✅</td></tr>
+<tr><td>课外阅读进度</td><td>同上，前缀 <code>story:</code></td><td class="ok">✅</td></tr>
+<tr><td>断点续学（学到第几章）</td><td>服务端 <code>study_progress</code></td><td class="ok">✅</td></tr>
+<tr><td>星星 / 勋章</td><td>服务端 <code>stars</code> / <code>achievements</code></td><td class="ok">✅</td></tr>
+<tr><td>掌握度 / 错题本</td><td>服务端 <code>mastery</code> / <code>mistakes</code></td><td class="ok">✅</td></tr>
+<tr><td>说话人设置 / 朗读音色</td><td>本地（设备相关，本就不该跨设备）</td><td>—</td></tr>
+</table>
+
+<h2>五、遗留 &amp; 建议</h2>
+<ul>
+<li><span class="warn">同名孩子会共用账号</span>：账号由 <code>child_&lt;名字&gt;</code> 生成、固定密码。家庭场景够用，但若两个学校/两个家庭都有「小明」会撞车。建议后续由家长设置密码。</li>
+<li><span class="warn">进度是「只增不减」合并</span>：状态只会往上走（未学→已学→已掌握），不会因为新设备而回退。如果将来要支持「重新学习/清零」，需要额外的重置接口。</li>
+<li><span class="warn">离线期间的进度</span>以本地为准，联网后补传；若同一孩子在两台设备离线各学一节，合并结果取高值，不会丢。</li>
+</ul>
+
+<h2>六、新增验收脚本</h2>
+<pre>node tools/_persist_verify.js     # 清空本地后能否找回进度
+node tools/_persist_multikid.js   # 多孩子之间是否隔离
+node tools/_persist_relogin.js    # 浏览器重启后自动登录同一账号
+node tools/_persist_ratelimit.js  # 连续刷新是否被限流打挂</pre>
+
+</body></html>

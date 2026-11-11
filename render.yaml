@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: al-study-system
+    runtime: python
+    plan: free
+    buildCommand: "python -c \"print('no build needed')\""
+    startCommand: "python server.py"
+    healthCheckPath: "/"
+    envVars:
+      - key: PORT
+        value: "8000"

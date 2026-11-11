@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识点写厚 · 全量复核报告</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+background:#f4f6f9;color:#1c2333;padding:20px;line-height:1.65}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:22px;letter-spacing:.5px;margin-bottom:4px}
+.sub{color:#6b7688;font-size:13px;margin-bottom:18px}
+.banner{background:#e8f7ee;border:1px solid #b7e2c6;border-left:5px solid #2e9e5b;
+border-radius:10px;padding:16px 18px;margin-bottom:18px}
+.banner .big{font-size:19px;font-weight:700;color:#1d7a44}
+.banner .n{font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.card{background:#fff;border:1px solid #e2e7ef;border-radius:10px;padding:14px 16px}
+.card .lab{font-size:12px;color:#6b7688;margin-bottom:6px}
+.card .val{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums}
+.card .val small{font-size:12px;font-weight:400;color:#8892a4;margin-left:3px}
+section{background:#fff;border:1px solid #e2e7ef;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+h2{font-size:15px;margin-bottom:12px;padding-left:9px;border-left:3px solid #3b6ef0}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #eef1f6}
+th{color:#6b7688;font-weight:600;font-size:12.5px;background:#fafbfd}
+td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+td.k{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+td.ok{color:#1d7a44;font-weight:600}
+td.bad{color:#c0392b;font-weight:700}
+tr:last-child td{border-bottom:none}
+.note{font-size:12.5px;color:#7a8497;margin-top:10px;line-height:1.7}
+.tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:20px;
+background:#eef2fb;color:#3b6ef0;margin-right:6px}
+</style></head><body><div class="wrap">
+<h1>AL 自学系统 · 知识点写厚 — 全量复核报告</h1>
+<div class="sub">复核时间：2026-09-22 08:02 ｜ 自动接力第 N 次运行（第 0 步自查即达成退出条件）</div>
+
+<div class="banner">
+<div class="big">T = <span class="n">0</span> —— 全部写完，本轮无需改动</div>
+<div class="note">第 0 步统计即满足退出条件（T = 0），按任务约定<b>直接结束</b>：
+未派子任务（避免 429）、未改动任何讲义内容、questions 数组零变动。</div>
+</div>
+
+<div class="cards">
+<div class="card"><div class="lab">课程数</div><div class="val">274</div></div>
+<div class="card"><div class="lab">知识点子点</div><div class="val">1040</div></div>
+<div class="card"><div class="lab">题目总数</div><div class="val">1485</div></div>
+<div class="card"><div class="lab">仍薄 T</div><div class="val" style="color:#1d7a44">0</div></div>
+<div class="card"><div class="lab">篇幅区间</div><div class="val">650–2934<small>字</small></div></div>
+<div class="card"><div class="lab">平均篇幅</div><div class="val">893.7<small>字</small></div></div>
+</div>
+
+<section>
+<h2>六段模板覆盖（硬校验）</h2>
+<table><thead><tr><th>模板段落</th><th>校验结果</th></tr></thead><tbody>
+<tr><td class="k">【一句话懂】</td><td class="v ok">0 条缺失</td></tr><tr><td class="k">【为什么重要】</td><td class="v ok">0 条缺失</td></tr><tr><td class="k">【具体怎么做】</td><td class="v ok">0 条缺失</td></tr><tr><td class="k">【生活小例子】</td><td class="v ok">0 条缺失</td></tr><tr><td class="k">【常见小误区】</td><td class="v ok">0 条缺失</td></tr><tr><td class="k">【一句小结】</td><td class="v ok">0 条缺失</td></tr>
+</tbody></table>
+<div class="note">判定标准：每条 content 必须<b>同时包含</b>「【一句话懂】」与「【一句小结】」等六段，且长度 ≥ 650 字。<br>
+涉及 1040 条子点，全部通过；空题子点 0 个。</div>
+</section>
+
+<section>
+<h2>离线副本同步校验（static/offline/lessons）</h2>
+<table><thead><tr><th>指标</th><th>数值</th></tr></thead><tbody>
+<tr><td>已比对 section</td><td class="num">997</td></tr>
+<tr><td>内容不一致（漂移）</td><td class="num" style="color:#1d7a44">0</td></tr>
+<tr><td>未匹配 heading（历史遗留）</td><td class="num">1</td></tr>
+<tr><td>缺离线副本的课程</td><td class="num">14</td></tr>
+</tbody></table>
+<div class="note">比对方法：按 course_id 分课程逐 section 精确比对（全局 heading 集合比对会因「应用」「School things」
+等跨课程重名产生虚高漂移，不可用）。<br>
+<b>997 个 section 零漂移</b>：离线副本与主库内容完全一致，说明此前所有合并均已同步到位。</div>
+</section>
+
+<section>
+<h2>分学科子点分布</h2>
+<table><thead><tr><th>学科</th><th style="text-align:right">子点数</th></tr></thead><tbody>
+<tr><td>数学</td><td class="num">362</td></tr><tr><td>语文</td><td class="num">237</td></tr><tr><td>英语学习方法</td><td class="num">123</td></tr><tr><td>记忆方法</td><td class="num">51</td></tr><tr><td>珠心算</td><td class="num">48</td></tr><tr><td>Python编程</td><td class="num">42</td></tr><tr><td>英语</td><td class="num">36</td></tr><tr><td>网络安全</td><td class="num">36</td></tr><tr><td>中医</td><td class="num">33</td></tr><tr><td>象棋</td><td class="num">24</td></tr><tr><td>围棋</td><td class="num">24</td></tr><tr><td>军棋</td><td class="num">24</td></tr>
+</tbody></table>
+</section>
+
+<section>
+<h2>结论与后续</h2>
+<div class="note">
+<span class="tag">任务目标</span>已达成：全库 1040 条知识点讲解均为 ≥650 字（目标 800–1000 字）、六段模板齐全，
+面向中小学生认知水平撰写，questions 数组未做任何改动。<br><br>
+<span class="tag">本轮处理</span>无（T = 0，未产生新补丁）。<br>
+<span class="tag">剩余切片</span>无 —— 语文 g1–g6、数学 g1–g12、英语 g3–g4、网络安全、拓展漏扩 全部完成。<br><br>
+<span class="tag">非本任务待办</span>Python 编程课程（py-i1~i9、py-a1~a5，共 14 门）无离线副本，
+不在本任务范围内；如需 APK 离线包含 Python 课程，另需补生成离线副本并重跑 prep_apk.py 重新打包。
+</div>
+</section>
+</div></body></html>

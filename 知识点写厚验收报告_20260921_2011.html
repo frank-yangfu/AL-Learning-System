@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>AL自学系统 · 知识点写厚验收报告</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:32px 28px 48px;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+background:#f6f7f9;color:#1f2328;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px;letter-spacing:-.3px}
+.sub{color:#6b7280;font-size:13px;margin-bottom:24px}
+.banner{background:linear-gradient(135deg,#0f766e,#10b981);color:#fff;border-radius:14px;
+padding:22px 26px;margin-bottom:22px;box-shadow:0 6px 20px rgba(16,185,129,.22)}
+.banner .big{font-size:30px;font-weight:700;letter-spacing:-.5px}
+.banner .sm{opacity:.92;font-size:13.5px;margin-top:4px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px}
+.card .k{font-size:12px;color:#6b7280;letter-spacing:.3px}
+.card .v{font-size:24px;font-weight:700;margin-top:4px;color:#0f766e}
+.card .v.zero{color:#10b981}
+h2{font-size:15px;margin:26px 0 10px;padding-left:9px;border-left:3px solid #10b981}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb;
+border-radius:12px;overflow:hidden;font-size:13.5px}
+th{background:#f3f4f6;text-align:left;padding:10px 14px;font-weight:600;color:#374151;font-size:12.5px}
+td{padding:9px 14px;border-top:1px solid #f0f1f3}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#fafbfc}
+.ok{display:inline-block;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;
+border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600}
+.tpl{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tpl span{background:#fff;border:1px solid #d1d5db;border-radius:999px;padding:5px 13px;font-size:12.5px;color:#374151}
+.tpl span b{color:#0f766e}
+.note{background:#fff;border:1px solid #e5e7eb;border-left:3px solid #f59e0b;border-radius:10px;
+padding:14px 18px;font-size:13px;color:#374151;margin-top:10px}
+code{background:#f3f4f6;border-radius:4px;padding:1px 5px;font-size:12.5px}
+.foot{margin-top:26px;color:#9ca3af;font-size:12px;text-align:center}
+</style></head><body><div class="wrap">
+<h1>AL 自学系统 · 知识点写厚验收报告</h1>
+<div class="sub">复核时间 2026-09-21 20:12 ｜ 数据文件 curriculum_gen.json ｜ 判定标准：含【一句话懂】且 <code>len(content) &ge; 650</code> 且含【一句小结】</div>
+
+<div class="banner">
+  <div class="big">T = 0 ｜ 已全部写完</div>
+  <div class="sm">全库 1040 个子点全部达标，六段模板 1040/1040 齐全，离线副本零漂移</div>
+</div>
+
+<div class="cards">
+  <div class="card"><div class="k">仍薄知识点（T）</div><div class="v zero">0</div></div>
+  <div class="card"><div class="k">子点总数</div><div class="v">1040</div></div>
+  <div class="card"><div class="k">六段齐全</div><div class="v">1040</div></div>
+  <div class="card"><div class="k">题库总量</div><div class="v">1485</div></div>
+</div>
+
+<h2>篇幅分布</h2>
+<div class="cards" style="grid-template-columns:repeat(4,1fr)">
+  <div class="card"><div class="k">最短</div><div class="v">650 字</div></div>
+  <div class="card"><div class="k">最长</div><div class="v">2934 字</div></div>
+  <div class="card"><div class="k">平均</div><div class="v">894 字</div></div>
+  <div class="card"><div class="k">&lt; 650 字</div><div class="v zero">0</div></div>
+</div>
+
+<h2>六段模板覆盖</h2>
+<div class="tpl">
+<span><b>【一句话懂】</b> 1040/1040</span>
+<span><b>【为什么重要】</b> 1040/1040</span>
+<span><b>【具体怎么做】</b> 1040/1040</span>
+<span><b>【生活小例子】</b> 1040/1040</span>
+<span><b>【常见小误区】</b> 1040/1040</span>
+<span><b>【一句小结】</b> 1040/1040</span>
+</div>
+
+<h2>分学科明细</h2>
+<table>
+<thead><tr><th>学科 / 模块</th><th style="text-align:right">课程</th><th style="text-align:right">子点</th>
+<th style="text-align:right">题目</th><th style="text-align:right">最短</th><th style="text-align:right">平均</th><th>写厚状态</th></tr></thead>
+<tbody>
+<tr><td>数学</td><td class='n'>83</td><td class='n'>362</td><td class='n'>604</td><td class='n'>651</td><td class='n'>771</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>语文</td><td class='n'>48</td><td class='n'>237</td><td class='n'>337</td><td class='n'>650</td><td class='n'>705</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>英语学习方法</td><td class='n'>41</td><td class='n'>123</td><td class='n'>123</td><td class='n'>700</td><td class='n'>1156</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>记忆方法</td><td class='n'>17</td><td class='n'>51</td><td class='n'>51</td><td class='n'>714</td><td class='n'>1289</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>珠心算</td><td class='n'>16</td><td class='n'>48</td><td class='n'>48</td><td class='n'>685</td><td class='n'>1081</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>Python编程</td><td class='n'>14</td><td class='n'>42</td><td class='n'>42</td><td class='n'>825</td><td class='n'>1362</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>英语</td><td class='n'>8</td><td class='n'>36</td><td class='n'>67</td><td class='n'>800</td><td class='n'>967</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>网络安全</td><td class='n'>12</td><td class='n'>36</td><td class='n'>108</td><td class='n'>652</td><td class='n'>697</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>中医</td><td class='n'>11</td><td class='n'>33</td><td class='n'>33</td><td class='n'>860</td><td class='n'>1146</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>象棋</td><td class='n'>8</td><td class='n'>24</td><td class='n'>24</td><td class='n'>722</td><td class='n'>993</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>围棋</td><td class='n'>8</td><td class='n'>24</td><td class='n'>24</td><td class='n'>696</td><td class='n'>949</td><td><span class='ok'>达标</span></td></tr>
+<tr><td>军棋</td><td class='n'>8</td><td class='n'>24</td><td class='n'>24</td><td class='n'>707</td><td class='n'>911</td><td><span class='ok'>达标</span></td></tr>
+</tbody></table>
+
+<h2>离线副本同步</h2>
+<div class="note">
+离线目录 <code>static/offline/lessons</code> 共比对 <b>1058</b> 个 section：<br>
+· 与主文件 <code>curriculum_gen.json</code> 内容不一致：<b>0</b> 条（零漂移）<br>
+· heading 未匹配（历史遗留、非本次范围）：61 条
+</div>
+
+<h2>本轮结论</h2>
+<div class="note">
+第 0 步自查结果 <b>T = 0</b>，按任务约定「若 T == 0 则直接结束」，本轮<b>未新增 / 修改任何内容</b>，
+仅执行全量硬校验。所有 1040 个子点均已写厚至 650 字以上、六段模板完整、<code>questions</code> 数组零改动（1485 题）。
+</div>
+
+<div class="foot">AL 自学系统 · 自动化任务 2b996747 ｜ 报告生成于 2026-09-21 20:12</div>
+</div></body></html>

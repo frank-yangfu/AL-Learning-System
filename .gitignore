@@ -1,0 +1,54 @@
+# ===== 运行时数据（绝不入库）=====
+data/*.db
+data/*.db-journal
+data/.app_secret
+data/*.json
+child_profile.json
+*.log
+learning.db
+
+# ===== 本地工具 / 临时文件 =====
+tools/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Thumbs.db
+NUL
+
+# ===== 我调试时生成的临时脚本前缀 =====
+_b_patch.py
+_expand_detail.py
+_export_offline.py
+_gen_abacus.py
+_gen_chess.py
+_gen_examples.py
+_gen_security.py
+_gen_stories_*.py
+_fill_empty.py
+_gen_content.py
+_gen_eng.py
+_gen_mem.py
+_gen_py.py
+_gen_tcm.py
+_measure_quiz.py
+_probe_content.py
+_normalize_examples.py
+_mk_startup_vbs.py
+_test_*.py
+
+# ===== 大文件 / 二进制产物 =====
+tts_cache/
+assets_src/
+android-app/
+ui_smoke_shots/
+static/offline/stories/covers/
+*.exe
+*.msi
+*.apk
+qr_cpolar.png
+
+# ===== 办公/编辑器 =====
+.vscode/
+.idea/
+.workbuddy/

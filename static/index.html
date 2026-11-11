@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>AL 自学系统 · 苏格拉底式 AI 导师</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="styles.css?v=20260731h" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#4f46e5" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <!-- KaTeX 数学公式渲染（轻量极速，用于练习题/诊断/讲解等所有数学内容） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <!-- Tesseract.js OCR（纯前端文字识别，用于拍照搜题） -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body class="has-bottom-tabs">
+  <!-- 语音环境提示：在预览面板/iframe 中浏览器会禁用语音朗读 -->
+  <div id="voice-env-banner" class="voice-env-banner" hidden>
+    <span class="veb-icon">🔇</span>
+    <span class="veb-text">检测到你在 <b>预览面板</b> 里打开，浏览器会<b>禁用语音朗读</b>（老师讲课 / AI 讲解听不到声音）。</span>
+    <button class="veb-btn" onclick="window.open(location.origin+'/','_blank')">↗ 用浏览器打开（出声）</button>
+    <button class="veb-close" onclick="document.getElementById('voice-env-banner').hidden=true" title="关闭">✕</button>
+  </div>
+
+  <!-- 原独立桌面已合并进 app-view 的 #view-home -->
+
+  <!-- 首次使用向导（注册 + 设置PIN） -->
+  <div id="setup-wizard" class="modal" hidden>
+    <div class="modal-mask" onclick=""></div>
+    <div class="modal-box setup-box">
+      <div class="setup-step" id="setup-step-1">
+        <h2>👋 欢迎来到 AL 学习机！</h2>
+        <p>先告诉老师你叫什么名字？</p>
+        <div class="field">
+          <input id="setup-name" placeholder="输入你的名字" maxlength="10" />
+        </div>
+        <div class="setup-avatars">
+          <p style="margin-bottom:8px;font-size:14px;color:var(--muted)">选一个你喜欢的小头像：</p>
+          <div class="avatar-picker" id="avatar-picker">
+            <button class="av-opt" data-av="🐱">🐱</button>
+            <button class="av-opt" data-av="🐶">🐶</button>
+            <button class="av-opt" data-av="🐰">🐰</button>
+            <button class="av-opt" data-av="🐼">🐼</button>
+            <button class="av-opt" data-av="🦊">🦊</button>
+            <button class="av-opt" data-av="🐯">🐯</button>
+            <button class="av-opt" data-av="🐸">🐸</button>
+            <button class="av-opt" data-av="🐵">🐵</button>
+            <button class="av-opt" data-av="🦄">🦄</button>
+            <button class="av-opt" data-av="🐧">🐧</button>
+            <button class="av-opt" data-av="🐙">🐙</button>
+            <button class="av-opt" data-av="🐳">🐳</button>
+          </div>
+        </div>
+        <button class="btn" onclick="UI.setupStep1()">下一步 →</button>
+      </div>
+      <div class="setup-step" id="setup-step-2" hidden>
+        <h2>🔒 设置家长密码</h2>
+        <p>用来管理学习时间和设置，一定要记住哦！</p>
+        <div class="pin-setup">
+          <input type="password" maxlength="1" class="pin-digit" id="sp-1" oninput="UI.pinNext(this, 'sp-2')" autofocus />
+          <input type="password" maxlength="1" class="pin-digit" id="sp-2" oninput="UI.pinNext(this, 'sp-3')" />
+          <input type="password" maxlength="1" class="pin-digit" id="sp-3" oninput="UI.pinNext(this, 'sp-4')" />
+          <input type="password" maxlength="1" class="pin-digit" id="sp-4" oninput="UI.pinNext(this, 'sp-done')" />
+        </div>
+        <div class="error" id="setup-pin-error" hidden>密码至少 4 位数字</div>
+        <button class="btn" id="sp-done" onclick="UI.setupStep2()">🎉 完成设置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 家长验证弹窗 -->
+  <div id="parent-gate" class="modal parent-modal" hidden>
+    <div class="modal-mask" onclick="UI.closeParentGate()"></div>
+    <div class="modal-box small-modal">
+      <h3 style="margin:0 0 8px">🔒 家长验证</h3>
+      <p style="margin:0 0 16px;color:var(--muted);font-size:14px">请输入家长密码进入设置</p>
+      <div class="pin-setup">
+        <input type="password" maxlength="1" class="pin-digit" id="pg-1" oninput="UI.pinNext(this, 'pg-2')" autofocus />
+        <input type="password" maxlength="1" class="pin-digit" id="pg-2" oninput="UI.pinNext(this, 'pg-3')" />
+        <input type="password" maxlength="1" class="pin-digit" id="pg-3" oninput="UI.pinNext(this, 'pg-4')" />
+        <input type="password" maxlength="1" class="pin-digit" id="pg-4" oninput="UI.checkPin()" />
+      </div>
+      <div class="error" id="pg-error" hidden>密码错误，再试一次</div>
+      <button class="btn ghost" onclick="UI.closeParentGate()" style="margin-top:8px">取消</button>
+    </div>
+  </div>
+
+  <!-- 家长面板 -->
+  <div id="parent-panel" class="modal parent-modal" hidden>
+    <div class="modal-mask" onclick="UI.closeParentPanel()"></div>
+    <div class="modal-box panel-box">
+      <div class="modal-head">
+        <h3>🔒 家长设置</h3>
+        <button class="btn ghost small" onclick="UI.closeParentPanel()">✕ 关闭</button>
+      </div>
+      <div class="panel-scroll">
+        <div class="panel-section">
+          <h4>⏱ 每日学习时长</h4>
+          <div class="time-options" id="time-options">
+            <button class="time-opt" data-min="15">15分钟</button>
+            <button class="time-opt active" data-min="30">30分钟</button>
+            <button class="time-opt" data-min="45">45分钟</button>
+            <button class="time-opt" data-min="60">60分钟</button>
+            <button class="time-opt" data-min="90">90分钟</button>
+          </div>
+        </div>
+        <div class="panel-section">
+          <h4>📊 今日学习报告</h4>
+          <div id="parent-today-report"></div>
+        </div>
+        <div class="panel-section">
+          <h4>⚙️ 系统设置</h4>
+          <button class="btn" onclick="UI.goSettings()">模型与 API 配置</button>
+          <button class="btn ghost" onclick="UI.switchChild()" style="margin-left:8px">👥 切换孩子</button>
+          <button class="btn ghost" onclick="UI.addChild()" style="margin-left:8px">➕ 添加孩子</button>
+        </div>
+        <div class="panel-section">
+          <h4>👥 孩子列表</h4>
+          <div id="child-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📸 拍照搜题弹窗 -->
+  <div id="ocr-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeOCR()"></div>
+    <div class="modal-box ocr-box">
+      <div class="modal-head">
+        <h3>📸 拍照 / 输入题目 · AL 老师讲题</h3>
+        <button class="btn ghost small" onclick="UI.closeOCR()">✕</button>
+      </div>
+      <div class="ocr-body" id="ocr-body">
+        <div class="ocr-intro">拍下题目，或把题目打在下面，AL 老师会把这道题算对、一步步讲透，让你真正学明白 ✨</div>
+        <div class="ocr-actions">
+          <button class="ocr-btn" id="ocr-camera-btn" onclick="UI.startCamera()">
+            <span class="ocr-btn-icon">📷</span>
+            <span>拍照</span>
+          </button>
+          <button class="ocr-btn" onclick="UI.uploadImage()">
+            <span class="ocr-btn-icon">🖼️</span>
+            <span>上传图片</span>
+          </button>
+        </div>
+        <div class="ocr-type-row">
+          <textarea id="ocr-text-input" class="ocr-textarea" placeholder="也可以直接把题目打在这里（或粘贴截图里的文字）…"></textarea>
+          <button class="btn btn-primary" onclick="UI.explainTyped()">🔍 让 AL 老师讲这道题</button>
+        </div>
+        <div id="ocr-preview" class="ocr-preview" style="display:none">
+          <img id="ocr-img" class="ocr-img" />
+        </div>
+        <div id="ocr-status" class="ocr-status" style="display:none"></div>
+        <div id="ocr-result" class="ocr-result" style="display:none"></div>
+        <input type="file" id="ocr-file-input" accept="image/*" style="display:none" onchange="UI.onImageSelected(event)" />
+        <video id="ocr-video" class="ocr-video" style="display:none" playsinline></video>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📖 题目解析卡片 -->
+  <div id="explain-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeExplain()"></div>
+    <div class="modal-box explain-box">
+      <div class="modal-head">
+        <h3>📖 AL 老师讲题</h3>
+        <button class="btn ghost small" onclick="UI.closeExplain()">✕</button>
+      </div>
+      <div class="explain-body" id="explain-body">
+        <div class="ocr-status" id="explain-status"><span class="spinner"></span> AL 老师正在读题、思考怎么讲…</div>
+      </div>
+      <div class="explain-foot" id="explain-foot" style="display:none">
+        <input id="explain-q" class="explain-q" placeholder="还有哪步没懂？比如：第二步为什么这么算 / 换种讲法" />
+        <button class="btn small" onclick="UI.explainFollowup()">追问</button>
+        <button class="btn small ghost" onclick="UI.explainReread()">🔄 换种讲法</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🏆 成就弹窗 -->
+  <div id="achievement-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeAchievement()"></div>
+    <div class="modal-box achieve-box">
+      <div class="modal-head">
+        <h3>🏆 学习成就</h3>
+        <button class="btn ghost small" onclick="UI.closeAchievement()">✕</button>
+      </div>
+      <div class="achieve-body" id="achieve-body"></div>
+    </div>
+  </div>
+
+  <!-- 📢 朗读跟读面板（当前句高亮） -->
+  <div id="karaoke-panel" style="display:none">
+    <div class="kr-meta" id="karaoke-meta">🔊 正在朗读 1/1</div>
+    <div class="kr-current" id="karaoke-current"></div>
+  </div>
+
+  <!-- 🌈 课外读物：列表 -->
+  <div id="stories-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeStories()"></div>
+    <div class="modal-box achieve-box">
+      <div class="modal-head">
+        <h3>🌈 课外读物</h3>
+        <button class="btn ghost small" onclick="UI.closeStories()">✕</button>
+      </div>
+      <div class="achieve-body" id="stories-body"></div>
+    </div>
+  </div>
+
+  <!-- 🌈 课外读物：阅读+答题 -->
+  <div id="story-read-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeStory()"></div>
+    <div class="modal-box achieve-box story-read-box">
+      <div class="modal-head">
+        <h3 id="story-read-title">📖</h3>
+        <button class="btn ghost small" onclick="UI.closeStory()">✕</button>
+      </div>
+      <div class="achieve-body" id="story-read-body"></div>
+    </div>
+  </div>
+
+  <!-- 🎉 里程碑庆祝弹层 -->
+  <div id="milestone-toast" class="milestone-toast" style="display:none">
+    <div class="ms-fire">🔥</div>
+    <div class="ms-title" id="ms-title">连胜 3 天！</div>
+    <div class="ms-desc" id="ms-desc">奖励 +10 ⭐ 星星，继续保持！</div>
+  </div>
+
+  <!-- 解锁动画浮层 -->
+  <div id="unlock-toast" class="unlock-toast" style="display:none">
+    <div class="unlock-icon" id="unlock-icon">🏆</div>
+    <div class="unlock-title" id="unlock-title">成就解锁！</div>
+    <div class="unlock-desc" id="unlock-desc"></div>
+  </div>
+
+  <!-- 锁屏（学习时长到了） -->
+  <div id="lock-screen" class="lock-screen" hidden>
+    <div class="lock-content">
+      <div class="lock-emoji">😊</div>
+      <h2>今天的任务完成啦！</h2>
+      <p>让眼睛休息一下，看看窗外吧 👀</p>
+      <div class="lock-countdown-wrap">
+        <div class="lock-countdown" id="lock-countdown">30:00</div>
+        <div class="lock-label">解锁倒计时</div>
+      </div>
+      <button class="lock-parent-btn" onclick="UI.unlockByParent()">🔒 家长解锁</button>
+    </div>
+  </div>
+
+  <!-- 主应用 -->
+  <div id="app-view" hidden>
+    <header class="topbar">
+      <div class="child-chip">
+        <span class="child-av" id="top-avatar">🐱</span>
+        <span class="child-name" id="top-name">小朋友</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="ghost-icon" onclick="UI.openMore()" aria-label="更多功能" title="更多功能">⋯</button>
+      <button class="ghost-icon" onclick="UI.openParentGate()" aria-label="家长设置" title="家长">🔒</button>
+    </header>
+    <div class="layout">
+      <!-- 侧边栏已移除：角色/图谱/报告/设置收进右上角「⋯更多」抽屉 -->
+      <main>
+        <!-- 孩子主页（原独立桌面合并进来，进入即此页） -->
+        <section class="view active" id="view-home">
+          <!-- 🏠 学习机模式：顶部状态条（对标讯飞学习机桌面） -->
+          <div class="mach-status">
+            <div class="ms-child">
+              <span class="ms-avatar" id="launcher-avatar">🐱</span>
+              <div class="ms-meta">
+                <div class="ms-name" id="launcher-name">小朋友</div>
+                <div class="ms-sub" id="launcher-date"></div>
+              </div>
+            </div>
+            <div class="ms-chips">
+              <span class="ms-chip ms-streak" id="ms-streak" title="连续学习天数">🔥 0 天</span>
+              <span class="ms-chip ms-stars" id="ms-stars" title="累计星星">⭐ 0</span>
+              <span class="ms-chip ms-time" id="ms-time" title="今日学习时长">⏱ 0/30 分</span>
+            </div>
+          </div>
+
+          <!-- 🤖 AI 学伴卡：主动开口 + 动作按钮 -->
+          <div class="companion-card" id="companion-card">
+            <div class="cc-head">
+              <div class="cc-avatar">🦊</div>
+              <div class="cc-title">
+                <div class="cc-name">小艾学伴 <span class="cc-online">● 在线</span></div>
+                <div class="cc-hint" id="companion-mood-hint">正在看你现在的学习情况…</div>
+              </div>
+              <button class="cc-open" onclick="UI.openCompanion()" title="和小艾聊天">💬</button>
+            </div>
+            <div class="cc-bubble" id="companion-opening">你好呀！我是小艾，你的学习搭档。</div>
+            <div class="cc-actions" id="companion-actions"></div>
+          </div>
+
+          <!-- 📱 学习机宫格：一屏直达所有功能 -->
+          <div class="mach-grid" id="mach-grid"></div>
+
+          <!-- 🔥 连胜 + 每日任务 -->
+          <div id="streak-bar" class="streak-bar" style="display:none"></div>
+          <div id="daily-tasks" class="daily-tasks" style="display:none"></div>
+
+          <!-- ⏯ 断点续学：上次学到哪，点一下直接接着学（没有记录时隐藏） -->
+          <div id="resume-card" class="resume-card" style="display:none"></div>
+
+          <div id="launcher-plan" class="home-plan" style="display:none">
+            <div class="plan-head">
+              <div class="plan-icon">📅</div>
+              <div class="home-plan-text">
+                <div class="plan-label">今日学习计划</div>
+                <div class="plan-progress" id="plan-progress">加载中…</div>
+              </div>
+              <button class="btn small ghost" onclick="UI.goDailyPlan()">查看全部 →</button>
+            </div>
+            <div id="plan-list" class="plan-list-mini"></div>
+          </div>
+
+          <div class="home-grid" style="display:none">
+            <button class="home-card hc-learn" onclick="UI.continueLearn()">
+              <span class="hc-icon">📖</span>
+              <span class="hc-title">继续学习</span>
+              <span class="hc-desc" id="lb-last-session">上次学到哪？点我继续</span>
+            </button>
+            <button class="home-card hc-course" onclick="UI.goCourseSquare()">
+              <span class="hc-icon">📚</span>
+              <span class="hc-title">课程广场</span>
+              <span class="hc-desc">小学 → 高中 全部课程</span>
+            </button>
+            <button class="home-card hc-practice" onclick="UI.goTodayPractice()">
+              <span class="hc-icon">✏️</span>
+              <span class="hc-title">今日练习</span>
+              <span class="hc-desc">AI 推荐专属练习题</span>
+            </button>
+            <button class="home-card hc-achieve" onclick="UI.goAchievement()">
+              <span class="hc-icon">🏆</span>
+              <span class="hc-title">学习成就</span>
+              <span class="hc-desc">收集星星和徽章</span>
+            </button>
+            <button class="home-card hc-stories" onclick="UI.openStories()">
+              <span class="hc-icon">🌈</span>
+              <span class="hc-title">课外读物</span>
+              <span class="hc-desc">分级故事 + 阅读理解</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 🤖 AI 学伴全屏对话（学习机模式核心） -->
+        <section class="view" id="view-companion">
+          <div class="cp-head">
+            <button class="cp-back" onclick="UI.go('home')" aria-label="返回">←</button>
+            <span class="cp-avatar">🦊</span>
+            <div class="cp-title">
+              <div class="cp-name">小艾学伴</div>
+              <div class="cp-status" id="cp-status">随时为你解答</div>
+            </div>
+            <div class="cp-tools">
+              <button class="cp-tool" id="cp-voice-btn" onclick="UI.toggleCompanionVoice()" title="语音模式：学伴回复自动朗读">🎙️</button>
+              <button class="cp-tool" onclick="UI.clearCompanion()" title="清空对话">🧹</button>
+            </div>
+          </div>
+          <div class="cp-chips" id="cp-chips">
+            <button class="cp-chip" onclick="UI.companionQuick('今天学什么')">今天学什么</button>
+            <button class="cp-chip" onclick="UI.companionQuick('帮我讲讲这道题')">讲讲这道题</button>
+            <button class="cp-chip" onclick="UI.companionQuick('我想复习错题')">复习错题</button>
+            <button class="cp-chip" onclick="UI.companionQuick('练几道题')">练几道题</button>
+            <button class="cp-chip" onclick="UI.companionQuick('我有点累')">我有点累</button>
+            <button class="cp-chip" onclick="UI.companionQuick('换个学习方法')">换个方法</button>
+          </div>
+          <div class="cp-log" id="cp-log"></div>
+          <div class="cp-suggest" id="cp-suggest"></div>
+          <div class="cp-composer">
+            <button class="cp-mic" id="cp-mic" onclick="UI.companionMic()" title="点一下说话">🎤</button>
+            <textarea id="cp-input" rows="1" placeholder="跟小艾说说…（Enter 发送）" onkeydown="UI.onCompanionKey(event)"></textarea>
+            <button class="cp-send" onclick="UI.companionSend()">发送</button>
+          </div>
+        </section>
+
+        <!-- 学习 -->
+        <section class="view" id="view-learn">
+          <div class="learn-head">
+            <div class="ctrl">
+              <label style="font-weight:600;font-size:13px">学习角色</label>
+              <select id="learn-role" onchange="UI.onRoleChange()"></select>
+            </div>
+            <div class="ctrl" style="flex:1;min-width:240px">
+              <label style="font-weight:600;font-size:13px">当前课程</label>
+              <div class="course-pick">
+                <span id="current-course" class="course-name">未选择（点右侧浏览目录）</span>
+                <span id="course-mastery" class="mastery-badge mv-untested" style="display:none"></span>
+                <button class="btn ghost small" onclick="UI.openCourse()">📚 浏览课程目录</button>
+                <button class="btn ghost small" onclick="UI.openCurrentLesson()" title="查看当前所选课程的详细内容">📖 课程内容</button>
+              </div>
+            </div>
+            <div class="ctrl">
+              <label style="font-weight:600;font-size:13px">会话</label>
+              <select id="learn-session" onchange="UI.onSessionChange()"></select>
+            </div>
+            <div class="stage-badge" id="stage-badge">关系阶段：初识</div>
+          </div>
+          <div class="chat-wrap">
+              <div id="assess-banner" class="assess-banner" style="display:none">
+              <span>📝 课后测试：<b id="assess-topic"></b></span>
+              <span id="test-timer" class="assess-progress">⏱ 00:00</span>
+              <button class="btn ghost small" onclick="UI.stopAssess()">退出测试</button>
+            </div>
+            <div id="assess-roadmap" class="assess-roadmap" style="display:none"></div>
+            <div id="test-panel" class="test-panel" style="display:none"></div>
+            <!-- 🗣️ 口语练习面板 -->
+            <div id="speech-panel" class="speech-panel" style="display:none">
+              <div class="speech-head">
+                <span>🗣️ 口语练习</span>
+                <span id="speech-progress" class="speech-progress">1/5</span>
+                <button class="btn ghost small" onclick="UI.stopSpeech()">退出</button>
+              </div>
+              <div class="speech-body" id="speech-body">
+                <div class="speech-sentence" id="speech-sentence">Loading…</div>
+                <div class="speech-actions">
+                  <button class="speech-record-btn" id="speech-record-btn" onclick="UI.startSpeechRecord()">
+                    <span class="sr-icon">🎤</span>
+                    <span class="sr-label" id="sr-label">点击跟读</span>
+                  </button>
+                </div>
+                <div class="speech-result" id="speech-result" style="display:none"></div>
+                <div class="speech-navi" id="speech-navi" style="display:none">
+                  <button class="btn ghost" onclick="UI.nextSpeechSentence()">下一句 →</button>
+                </div>
+              </div>
+              <div class="speech-footer" id="speech-footer">
+                <span class="speech-hint">🎤 点击麦克风按钮，朗读屏幕上显示的英文句子</span>
+              </div>
+            </div>
+            <div class="chat-log" id="chat-log"></div>
+            <div class="emotion-bar" id="emotion-bar" style="display:none"></div>
+            <div class="composer" id="composer">
+              <button class="btn ghost icon" id="mic-btn" onclick="UI.toggleMic()" title="点击开始/停止语音输入">🎤</button>
+              <textarea id="chat-input" placeholder="写下你的想法、疑问或答案……（Enter 发送，Shift+Enter 换行；或点 🎤 用语音）"
+                onkeydown="UI.onKey(event)"></textarea>
+              <button class="btn ghost small" onclick="UI.startAssess()" title="针对当前知识点进行掌握度测评（课后测试）">📝 课后测试</button>
+              <button class="btn ghost small" onclick="UI.openOCR()" title="拍照搜题">📸 搜题</button>
+              <button class="btn ghost small" id="speech-practice-btn" onclick="UI.startSpeech()" title="英语口语跟读练习（需选择英语课程）">🗣️ 口语</button>
+              <button class="btn ghost small" onclick="UI.markCheckpoint()" title="把当前上下文标记为学习节点">📌 检查点</button>
+              <button class="btn ghost icon" id="speak-btn" onclick="UI.speakLast()" title="朗读导师上一条回复">🔊</button>
+              <button class="btn ghost small" id="voice-mode-btn" onclick="UI.toggleVoiceMode()" title="语音对话模式：导师回复自动朗读，适合英语口语练习">🎙️ 语音</button>
+              <button class="btn" onclick="UI.send()">发送</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 自学：年级→科目→章节→学习内容 -->
+        <section class="view" id="view-selfstudy">
+        <section class="view" id="view-dashboard"></section>
+          <div class="ss-layout">
+            <aside class="ss-side">
+              <div class="ss-side-head">
+                <span>📚 选择课程</span>
+                <button class="btn ghost tiny" onclick="UI.ssResetSelectors()">重置</button>
+              </div>
+              <div class="ss-extra" id="ss-extra">
+                <div class="ss-extra-title">🌟 拓展与素养</div>
+                <div class="ss-extra-cards" id="ss-extra-cards"></div>
+              </div>
+              <div class="ss-field">
+                <label>学段</label>
+                <select id="ss-stage" onchange="UI.onSSStage()"></select>
+              </div>
+              <div class="ss-field">
+                <label>年级</label>
+                <select id="ss-grade" onchange="UI.onSSGrade()"></select>
+              </div>
+              <div class="ss-field">
+                <label>科目</label>
+                <select id="ss-subject" onchange="UI.onSSSubject()"></select>
+              </div>
+              <div class="ss-field">
+                <label>章节</label>
+                <select id="ss-chapter" onchange="UI.onSSChapter()"></select>
+              </div>
+              <div class="ss-progress-mini" id="ss-progress-mini"></div>
+            </aside>
+
+            <div class="ss-main">
+              <div class="ss-toolbar">
+                <div class="ss-crumb" id="ss-crumb">未选择章节</div>
+                <div class="ss-seq-bar" id="ss-seq-bar" style="display:none">
+                  <span class="ss-seq-label" id="ss-seq-label"></span>
+                  <div class="ss-pm-bar"><span id="ss-seq-progress" style="width:0%"></span></div>
+                </div>
+                <div class="ss-tools">
+                  <button class="btn small ghost" id="ss-seq-back" onclick="UI.ssExitSeq()" style="display:none">📚 返回目录</button>
+                  <button class="btn small" id="ss-prev" onclick="UI.ssPrev()" disabled>← 上一章</button>
+                  <button class="btn small" id="ss-next" onclick="UI.ssNext()" disabled>下一章 →</button>
+                  <button class="btn small ghost" id="ss-status-btn" onclick="UI.ssCycleStatus()" title="标记学习状态：未学→已学→已掌握">○ 未学</button>
+                  <button class="btn small ghost" onclick="UI.ssToggleNotes()" title="笔记 / 标注重点">📝 笔记</button>
+                  <button class="btn small ghost" onclick="UI.ssSpeakAll()" title="朗读全文">🔊 朗读</button>
+                  <button class="btn small" id="ss-ai-btn" onclick="UI.ssAIExplain()" title="AI 老师分步讲解">✨ AI 讲解</button>
+                  <button class="btn small" id="ss-quiz-btn" onclick="UI.ssToggleQuiz()" title="自主测验与纠错">📝 测验</button>
+                </div>
+              </div>
+              <div class="ss-content" id="ss-content">
+                <div class="ss-empty">👈 在左侧选择「学段 → 年级 → 科目 → 章节」，这里会直接显示该章节的学习内容，你可以自主阅读、听读、做笔记、测验。</div>
+              </div>
+              <div class="ss-notes" id="ss-notes" style="display:none">
+                <div class="ss-notes-head">📝 我的笔记（自动保存，仅本机）</div>
+                <textarea id="ss-notes-area" placeholder="在这里记下重点、疑问或自己的理解……" oninput="UI.ssSaveNotes()"></textarea>
+              </div>
+              <div class="ss-ai" id="ss-ai" style="display:none"></div>
+              <div class="ss-quiz" id="ss-quiz" style="display:none"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 角色 -->
+        <section class="view" id="view-roles">
+          <div class="panel" style="margin-bottom:16px">
+            <h2 id="role-form-title">创建学习角色</h2>
+            <input type="hidden" id="role-id" />
+            <div class="field"><label>角色名称</label><input id="role-name" placeholder="如：苏格拉底 / 费曼 / 编程教练" /></div>
+            <div class="field"><label>人格设定</label><textarea id="role-persona" placeholder="描述导师的身份、性格、口头禅……"></textarea></div>
+            <div class="field"><label>教学风格</label><input id="role-style" placeholder="如：不断反问、用类比、鼓励试错" /></div>
+            <div class="field"><label>课程主题</label><input id="role-course" placeholder="如：微积分 / 批判性思维 / Python" /></div>
+            <div class="field"><label>世界设定（可选）</label><textarea id="role-world" placeholder="Galgame 风格背景，可选"></textarea></div>
+            <div style="display:flex;gap:10px">
+              <button class="btn" onclick="UI.saveRole()">保存角色</button>
+              <button class="btn ghost" onclick="UI.resetRoleForm()">重置</button>
+            </div>
+          </div>
+          <div class="grid" id="role-list"></div>
+        </section>
+
+        <!-- 今日学习计划 -->
+        <section class="view" id="view-plan">
+          <div class="learn-head">
+            <div class="ctrl">
+              <h3 style="margin:0">📅 今日学习计划</h3>
+              <span id="plan-date" style="color:var(--muted);font-size:13px"></span>
+            </div>
+          </div>
+          <div id="daily-plan-box" class="daily-plan">
+            <div class="empty">正在生成今日计划…</div>
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center">
+            💡 完成每一项任务可获得 1 颗 ⭐ 星星奖励
+          </div>
+        </section>
+
+        <!-- 知识图谱 -->
+        <section class="view" id="view-kg">
+          <div class="learn-head">
+            <div class="ctrl">
+              <label style="font-weight:600;font-size:13px">选择角色</label>
+              <select id="kg-role" onchange="UI.renderKG()"></select>
+            </div>
+          </div>
+          <div id="kg-stats" class="kg-stats-bar"></div>
+          <div class="kg-stage"><svg id="kg-svg" viewBox="0 0 900 520"></svg></div>
+          <div class="kg-legend">
+            <span><span class="kg-dot" style="background:#22c55e"></span>已掌握</span>
+            <span><span class="kg-dot" style="background:#eab308"></span>熟悉</span>
+            <span><span class="kg-dot" style="background:#f97316"></span>了解</span>
+            <span><span class="kg-dot" style="background:#ef4444"></span>未掌握</span>
+            <span><span class="kg-dot" style="background:#94a3b8"></span>未测</span>
+            <span style="margin-left:auto">💡 点击节点可查看详情、跳转学习</span>
+          </div>
+        </section>
+
+        <!-- 精准学（讯飞式 测-学-练-测 闭环） -->
+        <section class="view" id="view-precision">
+          <div class="learn-head">
+            <div class="ctrl">
+              <label style="font-weight:600;font-size:13px">学科</label>
+              <select id="prec-subject" onchange="UI.onPrecSubject()"></select>
+            </div>
+            <div class="ctrl">
+              <label style="font-weight:600;font-size:13px">年级</label>
+              <select id="prec-grade" onchange="UI.onPrecGrade()"></select>
+            </div>
+            <div class="ctrl" style="align-items:flex-end;gap:8px;display:flex">
+              <button class="btn" onclick="UI.startDiagnose()">📋 开始诊断（测）</button>
+              <button class="btn ghost small" onclick="UI.retestWeak()">🔁 再测薄弱项</button>
+              <button class="btn ghost small" onclick="UI.showMistakes()">📕 错题本</button>
+            </div>
+          </div>
+
+          <div class="prec-intro">
+            参考科大讯飞 AI 学习机的 <b>测 → 学 → 练 → 测</b> 闭环：
+            先做一次<b>摸底诊断</b>找出薄弱项（图谱标红），再<b>只学红点</b>（AI 分步讲解＋例题）、做<b>分层练习</b>（基础／提升／拓展·举一反三），
+            最后<b>再测</b>验证、图谱变绿。
+          </div>
+
+          <!-- 📊 学习进度总览：四个掌握档位的分布 + 掌握率 + 上次再测进步 -->
+          <div class="prec-progress" id="prec-progress"></div>
+
+          <div class="kg-graph" id="prec-graph"></div>
+          <div class="kg-legend">
+            <span><i class="dot gray"></i>未测</span>
+            <span><i class="dot red"></i>薄弱／未掌握</span>
+            <span><i class="dot yellow"></i>了解／熟悉</span>
+            <span><i class="dot green"></i>掌握</span>
+          </div>
+
+          <div id="prec-diag" class="prec-panel" style="display:none"></div>
+          <div id="prec-practice" class="prec-panel" style="display:none"></div>
+          <div id="prec-mistakes" class="prec-panel" style="display:none"></div>
+        </section>
+
+        <!-- 📊 学情报告 -->
+        <section class="view" id="view-report">
+          <div class="report-page" id="report-page">
+            <!-- 顶部导航标签 -->
+            <div class="report-tabs">
+              <button class="rtab active" data-rtab="daily" onclick="UI.switchReportTab('daily')">今日</button>
+              <button class="rtab" data-rtab="weekly" onclick="UI.switchReportTab('weekly')">本周</button>
+              <button class="rtab" data-rtab="mastery" onclick="UI.switchReportTab('mastery')">掌握度</button>
+              <button class="rtab" data-rtab="weak" onclick="UI.switchReportTab('weak')">薄弱项</button>
+            </div>
+
+            <!-- 今日概览 -->
+            <div class="rpanel active" id="rpanel-daily">
+              <div class="rgrid-4" id="r-daily-cards"></div>
+              <div class="r-section">
+                <h3>今日学习记录</h3>
+                <div id="r-daily-detail"><p class="r-empty">暂无数据</p></div>
+              </div>
+            </div>
+
+            <!-- 本周趋势 -->
+            <div class="rpanel" id="rpanel-weekly">
+              <div class="r-section">
+                <h3>本周学习时长 <span class="r-subtitle">近 7 天</span></h3>
+                <div class="r-chart" id="r-weekly-chart"></div>
+              </div>
+              <div class="r-section">
+                <h3>本周掌握度变化</h3>
+                <div id="r-weekly-mastery"><p class="r-empty">暂无数据</p></div>
+              </div>
+            </div>
+
+            <!-- 掌握度矩阵 -->
+            <div class="rpanel" id="rpanel-mastery">
+              <div class="r-section">
+                <h3>知识点掌握度 <span class="r-subtitle">按学科分组</span></h3>
+                <div id="r-mastery-grid"></div>
+              </div>
+            </div>
+
+            <!-- 薄弱项 -->
+            <div class="rpanel" id="rpanel-weak">
+              <div class="r-section">
+                <h3>需要加强的知识点</h3>
+                <div id="r-weak-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 设置 -->
+        <section class="view" id="view-settings">
+          <div class="panel" style="max-width:600px">
+            <h2>大模型设置</h2>
+            <div class="hint" style="margin-bottom:14px">
+              可分别为「教学模型」和「推理模型」配置不同服务：<b>教学模型</b>用于苏格拉底对话与课程 AI 讲解（重表达、要通顺）；
+              <b>推理模型</b>用于课后测评判题（重推理、判断掌握度）。推理模型留空则自动复用教学模型。
+            </div>
+
+            <!-- 教学模型 -->
+            <div class="model-group">
+              <h3>🎓 教学模型（对话 / 课程讲解）</h3>
+              <div class="field">
+                <label>模型服务预设（一键填入地址）</label>
+                <select id="set-preset" onchange="UI.applyModelPreset('teach')">
+                  <option value="">— 自定义 / 手动填写 —</option>
+                  <option value="qwen">Ollama · Qwen2.5:7B（本机·中文推荐）</option>
+                  <option value="qwen3b">Ollama · Qwen2.5:3B（本机·轻量兜底）</option>
+                  <option value="ollama-r1">Ollama · DeepSeek-R1:7B（本机）</option>
+                  <option value="ollama">Ollama · 其他本地模型（本机）</option>
+                  <option value="lmstudio">LM Studio（本机）</option>
+                  <option value="deepseek">DeepSeek 云端（api.deepseek.com）</option>
+                </select>
+                <div class="hint">选本地预设会自动填入本机地址并关闭演示模式；本机模型不验证密钥，填占位串（如 ollama）即可。</div>
+              </div>
+              <div class="field">
+                <label>API Key</label>
+                <input id="set-key" type="password" placeholder="sk-... 或 DeepSeek 密钥" />
+              </div>
+              <div class="field">
+                <label>Base URL（OpenAI 兼容）</label>
+                <input id="set-base" placeholder="https://api.deepseek.com/v1" />
+                <div class="hint">本机 Qwen2.5：http://127.0.0.1:11434/v1 ，模型 qwen2.5:7b</div>
+              </div>
+              <div class="field">
+                <label>模型名称</label>
+                <input id="set-model" placeholder="qwen2.5:7b" />
+              </div>
+            </div>
+
+            <!-- 推理模型 -->
+            <div class="model-group">
+              <h3>🧠 推理模型（课后测评 / 判题）</h3>
+              <div class="field">
+                <label>模型服务预设（一键填入地址）</label>
+                <select id="set-r-preset" onchange="UI.applyModelPreset('reason')">
+                  <option value="">— 留空则复用教学模型 —</option>
+                  <option value="ollama-r1">Ollama · DeepSeek-R1:7B（本机·推理推荐）</option>
+                  <option value="qwen">Ollama · Qwen2.5:7B（本机）</option>
+                  <option value="ollama">Ollama · 其他本地模型（本机）</option>
+                  <option value="lmstudio">LM Studio（本机）</option>
+                  <option value="deepseek">DeepSeek 云端（api.deepseek.com）</option>
+                </select>
+                <div class="hint">推理/判题建议用 DeepSeek-R1:7B；三项全部留空时，测评会自动复用上面的教学模型。</div>
+              </div>
+              <div class="field">
+                <label>API Key</label>
+                <input id="set-r-key" type="password" placeholder="留空则复用教学模型" />
+              </div>
+              <div class="field">
+                <label>Base URL（OpenAI 兼容）</label>
+                <input id="set-r-base" placeholder="留空则复用教学模型" />
+              </div>
+              <div class="field">
+                <label>模型名称</label>
+                <input id="set-r-model" placeholder="deepseek-r1:7b" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="toggle"><input type="checkbox" id="set-mock" /> 演示模式（无需密钥，使用内置启发式回应）</label>
+              <div class="hint">未填密钥时会自动走演示模式。填入真实密钥后建议关闭以调用真实模型。演示模式对教学与推理模型同时生效。</div>
+            </div>
+            <!-- 🗣️ 语音朗读设置 -->
+            <div class="model-group">
+              <h3>🔊 语音朗读设置（平板上可调音色，告别机械嗓音）</h3>
+              <div class="field">
+                <label>朗读引擎（APK 里：填了服务器地址走「电脑服务器」，没填走「手机自带引擎」）</label>
+                <select id="set-tts-engine" onchange="UI.onTtsEngineChange()">
+                  <option value="cloud">电脑语音服务器 / 云端（默认·音质最好·推荐）</option>
+                  <option value="native">手机自带引擎（离线·需手机有语音引擎）</option>
+                  <option value="auto">自动（有服务器用服务器，没有就用手机引擎）</option>
+                  <option value="browser">浏览器朗读（本机嗓音·部分设备会静音）</option>
+                </select>
+                <div class="hint">网页端「电脑语音服务器 / 云端」= 由本机服务端用 edge-tts 生成音频，最稳、音质最好。装成 APK 后，若在下面填了电脑地址，就通过网络从电脑取音频（<b>华为等没有语音引擎的手机靠这条出声</b>）；没填则用手机系统自带引擎，完全离线。</div>
+              </div>
+              <!-- 🖥️ 电脑语音服务器：华为等「出厂无语音引擎」机型的唯一出路 -->
+              <div class="field">
+                <label>电脑语音服务器地址（手机没声音时填这里）</label>
+                <div class="btn-row">
+                  <input type="text" id="set-tts-server" placeholder="例如 192.168.1.5:8000" style="flex:1;min-width:180px" />
+                  <button class="btn small" onclick="UI.saveTtsServer()">💾 保存</button>
+                  <button class="btn small" onclick="UI.testTtsServer()">🔌 测试语音服务器</button>
+                  <button class="btn small" onclick="UI.fillTtsServerFromLocation()">📍 填入本机</button>
+                </div>
+                <div class="hint" id="tts-server-state">当前：未配置</div>
+                <div class="hint">
+                  <b>华为等手机出厂不带「文字转语音」引擎、也无法下载语音包</b>，系统朗读这条路走不通。改用电脑出声：<br>
+                  ① 在电脑上双击 <b>启动_AL系统_语音版.bat</b>（黑窗口里会显示「★ 手机/平板请填这个地址」，形如 192.168.1.5:8000）；<br>
+                  ② 手机连<b>同一个 WiFi</b>，把那个地址填进上面的框，点「💾 保存」；<br>
+                  ③ 点「🔌 测试语音服务器」——出现 ✅ 就说明通了，点「🔊 朗读测试」即可听到声音。<br>
+                  电脑关机或不同 WiFi 时会没声音，此时程序会自动改用手机自带引擎（如果有）。
+                </div>
+              </div>
+              <div class="field">
+                <label>朗读嗓音（默认自动优选本机最自然的声音；可手动挑选）</label>
+                <select id="set-voice" onchange="UI.onTtsVoiceChange()">
+                  <option value="">— 自动优选（推荐）—</option>
+                </select>
+                <div class="hint">带 ★ 的是本机高质量嗓音。若列表里没有好听的：iPad 可在「设置 → 辅助功能 → 语音内容 → 嗓音」下载「Yue / Ting-Ting」等 Siri 嗓音；Android 可在「设置 → 语言和声输入 → 文字转语音输出」里安装 Google 普通话（Enhanced）。下载后点「刷新可用嗓音」即可选用。</div>
+              </div>
+              <div class="field btn-row">
+                <button class="btn small" onclick="UI.refreshVoices()">🔄 刷新可用嗓音</button>
+                <button class="btn small" onclick="UI.testTts()">🔊 朗读测试</button>
+                <button class="btn small" onclick="UI.ttsSelfTest()">🩺 语音自检</button>
+                <button class="btn small" onclick="UI.testTtsServer()">🔌 测试语音服务器</button>
+                <button class="btn small" onclick="UI.openTtsSettings()">⚙️ 打开手机语音设置</button>
+                <button class="btn small" onclick="UI.reinitTts()">🔄 重新初始化</button>
+              </div>
+              <div class="hint">装成 App 的手机/平板若<b>没有声音</b>：先点「🩺 语音自检」看第一行写的<b>当前朗读方式</b>——<br>· 显示「电脑语音服务器」→ 点「🔌 测试语音服务器」确认电脑开机、同一 WiFi；<br>· 显示「无可用引擎」→ 华为等机型请按上面「电脑语音服务器地址」三步走；<b>不要</b>去系统设置里找「文字转语音」，部分机型根本没有这一项。<br>· 显示「手机系统语音引擎」但没声音 → 检查媒体音量是否被调成 0、是否插着耳机/连着蓝牙。</div>
+              <div class="field">
+                <label>情感风格预设（一键调好语速/音调）</label>
+                <div class="seg" id="tts-style-seg">
+                  <button type="button" data-style="natural" class="seg-btn active" onclick="UI.applyTtsStyle('natural')">自然</button>
+                  <button type="button" data-style="warm" class="seg-btn" onclick="UI.applyTtsStyle('warm')">温柔</button>
+                  <button type="button" data-style="teacher" class="seg-btn" onclick="UI.applyTtsStyle('teacher')">老师</button>
+                  <button type="button" data-style="lively" class="seg-btn" onclick="UI.applyTtsStyle('lively')">活泼</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>语速：<span id="rate-val">0.95</span>×（越慢越清晰）</label>
+                <input type="range" id="set-rate" min="0.5" max="1.6" step="0.05" value="0.95" oninput="UI.onTtsSlider()" />
+              </div>
+              <div class="field">
+                <label>音调：<span id="pitch-val">1.02</span>（1.0 为标准，偏高更明亮、偏低更沉稳）</label>
+                <input type="range" id="set-pitch" min="0.5" max="2.0" step="0.02" value="1.02" oninput="UI.onTtsSlider()" />
+              </div>
+              <div class="field">
+                <label>音量：<span id="vol-val">1.0</span></label>
+                <input type="range" id="set-vol" min="0.2" max="1.0" step="0.05" value="1.0" oninput="UI.onTtsSlider()" />
+              </div>
+              <div class="hint">机械感主要来自系统默认嗓音。先在本机设置里下载「高质量 / Enhanced / Neural」嗓音并手动选中，效果最明显；风格预设会自动调整语速与音调，可再用滑块微调。</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="UI.applyRecommended()">⚡ 一键应用本地推荐配置</button>
+              <button class="btn" onclick="UI.testConnection()">🔌 测试连接</button>
+              <button class="btn" onclick="UI.saveSettings()">💾 保存设置</button>
+            </div>
+            <div id="conn-status" class="hint" style="margin-top:10px"></div>
+          </div>
+
+          <!-- 👨‍👩‍👧 家长小贴士（防沉迷/防退出） -->
+          <div class="panel" style="max-width:600px;margin-top:14px">
+            <h2>👨‍👩‍👧 家长小贴士</h2>
+            <div class="hint" style="margin-bottom:10px">
+              <b>防止孩子退出学习应用去玩游戏：</b>安卓平板自带「屏幕固定」功能，开启后平板只能停留在本应用，退出需要家长密码。
+            </div>
+            <div class="hint" style="line-height:2">
+              <b>开启方法（安卓 9 以上通用）：</b><br>
+              ① 打开平板「设置」→「安全和隐私」（或「生物识别和安全性」）→「更多安全设置」；<br>
+              ② 找到「屏幕固定」（部分机型叫「应用固定」），打开开关，并开启「固定前要求解锁」；<br>
+              ③ 按「最近任务」键（□ 或横条），找到本应用的卡片，点卡片下方的图钉图标 📌；<br>
+              ④ 固定后孩子只能使用本应用。家长取消：同时按住「返回 + 最近任务」键（或按指纹/输入锁屏密码）。<br>
+              <b>华为/荣耀：</b>设置 → 安全 → 更多安全设置 → 屏幕固定。<br>
+              <b>小米/红米：</b>设置 → 特色功能 → 手机分身/应用锁 附近可找到「屏幕固定」；或在最近任务里长按卡片 → 点击 📌。<br>
+              <b>三星：</b>设置 → 生物识别和安全性 → 其他安全设置 → 固定窗口。
+            </div>
+            <div class="hint" style="margin-top:10px;color:#b45309">
+              💡 建议：每天固定时段（如放学后 30–60 分钟）使用本应用，配合系统「屏幕使用时间」限额，效果更好。
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <!-- 底部 Tab 导航：学习机模式（首页 / 同步学 / 练习 / AI学伴 / 我的） -->
+    <nav class="bottom-tabs" id="bottom-tabs">
+      <button class="bottom-tab active" data-view="home" onclick="UI.go('home')">
+        <span class="bt-icon">🏠</span><span>首页</span>
+      </button>
+      <button class="bottom-tab" data-view="selfstudy" onclick="UI.go('selfstudy')">
+        <span class="bt-icon">📖</span><span>同步学</span>
+      </button>
+      <button class="bottom-tab" data-view="precision" onclick="UI.go('precision')">
+        <span class="bt-icon">🎯</span><span>练习</span>
+      </button>
+      <button class="bottom-tab" data-view="companion" onclick="UI.openCompanion()">
+        <span class="bt-icon">🤖</span><span>学伴</span>
+      </button>
+      <button class="bottom-tab" data-view="achievement" onclick="UI.openAchievement()">
+        <span class="bt-icon">🏆</span><span>我的</span>
+      </button>
+    </nav>
+    <!-- 🤖 常驻 AI 学伴球：任意应用内页面可唤起 -->
+    <button class="companion-fab" id="companion-fab" onclick="UI.openCompanion()" title="找小艾聊聊" aria-label="AI 学伴">
+      <span class="cf-face">🤖</span>
+      <span class="cf-dot"></span>
+    </button>
+    <div class="sidebar-mask" id="sidebar-mask" onclick="UI.closeSidebar()"></div>
+  </div>
+
+  <!-- 孩子不常用的高级功能，收进右上角「⋯更多」抽屉 -->
+  <div id="more-drawer" class="drawer-mask" hidden>
+    <div class="drawer-mask-bg" onclick="UI.closeMore()"></div>
+    <div class="drawer-panel">
+      <div class="drawer-head">
+        <span>更多功能</span>
+        <button class="ghost-icon" onclick="UI.closeMore()">✕</button>
+      </div>
+      <div class="drawer-list">
+        <button class="drawer-item" onclick="UI.go('roles');UI.closeMore()">🎭 学习角色</button>
+        <button class="drawer-item" onclick="UI.goDailyPlan();UI.closeMore()">📅 今日学习计划</button>
+        <button class="drawer-item" onclick="UI.go('kg');UI.closeMore()">🕸️ 知识图谱</button>
+        <button class="drawer-item" onclick="UI.go('report');UI.closeMore()">📊 学情报告</button>
+        <button class="drawer-item" onclick="UI.go('settings');UI.closeMore()">⚙️ 系统设置</button>
+        <button class="drawer-item" onclick="UI.go('dashboard');UI.closeMore()">📊 学习看板</button>
+        <button class="drawer-item" onclick="UI.openParentGate();UI.closeMore()">🔒 家长设置</button>
+        <button class="drawer-item" onclick="UI.logout();UI.closeMore()">🚪 退出登录</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 课程目录弹层 -->
+  <div id="course-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeCourse()"></div>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>📚 课程目录 · 小学 → 高中</h3>
+        <button class="btn ghost small" onclick="UI.closeCourse()">✕ 关闭</button>
+      </div>
+      <div class="course-meta" id="course-meta"></div>
+      <div class="course-stage-tabs" id="course-stage-tabs"></div>
+      <div class="course-body" id="course-body"></div>
+    </div>
+  </div>
+
+  <!-- 课程内容（详细讲义）弹层 -->
+  <div id="lesson-modal" class="modal" hidden>
+    <div class="modal-mask" onclick="UI.closeLesson()"></div>
+    <div class="modal-box lesson-box">
+      <div class="modal-head">
+        <div>
+          <h3 id="lesson-title">课程内容</h3>
+          <div class="lesson-meta" id="lesson-meta"></div>
+        </div>
+        <button class="btn ghost small" onclick="UI.closeLesson()">✕ 关闭</button>
+      </div>
+      <div class="lesson-scroll" id="lesson-scroll">
+        <div class="lesson-content" id="lesson-content"></div>
+        <div id="lesson-ai" class="lesson-ai" style="display:none"></div>
+        <p class="lesson-ai-hint" id="lesson-ai-hint">
+          「✨ AI 深度讲解」会<b>先讲课本要点、再给每点的例题、最后总结</b>。
+          每讲完一个要点，请点<b>「✅ 我学会了」</b>进入下一个；如果<b>「❌ 没听懂」</b>，老师会<b>换一种讲法</b>再讲一遍，直到你真的学会这一章。
+          真实 AI 模式下讲解会<b>自动朗读</b>，也可点每个要点旁的 🔊 重听。
+        </p>
+        <div id="voice-diag" class="voice-diag" style="display:none"></div>
+      </div>
+      <div class="lesson-actions">
+        <button class="btn ghost small" onclick="UI.listenLesson()">🔊 听老师讲这节课</button>
+        <button class="btn ghost small" onclick="UI.videoLesson()">📺 配套教学视频</button>
+        <button class="btn ghost small" id="ai-explain-btn" onclick="UI.aiExplain()">✨ AI 深度讲解</button>
+        <button class="btn ghost small" onclick="UI.diagnoseVoice()">🔊 语音诊断</button>
+        <button class="btn" onclick="UI.chooseLesson()">✅ 选择这门课并开始学习</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <script src="gamify.js"></script>
+  <script src="offline-shim.js"></script>
+  <script src="app.js?v=20260731h"></script>
+  <button id="install-btn" style="display:none;position:fixed;bottom:80px;right:20px;z-index:9999;padding:10px 16px;background:#4f46e5;color:#fff;border:none;border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2)" onclick="pwaInstall()">📲 安装到桌面</button>
+  <button id="export-data-btn" style="display:none;position:fixed;bottom:140px;right:20px;z-index:9999;padding:10px 16px;background:#22c55e;color:#fff;border:none;border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2)" onclick="exportMyData()">📤 导出学习数据</button>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const b = document.getElementById('install-btn');
+      if (b) b.style.display = 'block';
+    });
+    function pwaInstall() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        const b = document.getElementById('install-btn');
+        if (b) b.style.display = 'none';
+      });
+    }
+  </script>
+</body>
+</html>

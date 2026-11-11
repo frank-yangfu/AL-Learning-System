@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识点「增强三段」全量完成验收报告</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:32px 20px;background:#f6f7f9;color:#1d2129;
+ font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px}
+.sub{color:#86909c;font-size:13px;margin-bottom:24px}
+.card{background:#fff;border:1px solid #e5e6eb;border-radius:12px;padding:22px 24px;margin-bottom:18px}
+h2{font-size:17px;margin:0 0 14px;padding-left:10px;border-left:4px solid #2f6fed}
+.big{font-size:38px;font-weight:700;color:#00a870}
+.big small{font-size:16px;color:#86909c;font-weight:400}
+.bar{height:12px;border-radius:6px;background:#e5e6eb;overflow:hidden;margin:12px 0 6px}
+.bar span{display:block;height:100%;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid #f0f0f0;text-align:left;vertical-align:top}
+th{background:#fafbfc;color:#4e5969;font-weight:600;font-size:13px}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.val{text-align:right;font-weight:600}
+.ok{color:#00a870;font-weight:600}.bad{color:#e54d42;font-weight:600}
+.seg{margin:6px 0;padding:10px 12px;background:#f7f9ff;border-left:3px solid #2f6fed;border-radius:4px;font-size:13.5px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;background:#e8f3ff;color:#2f6fed;font-size:12px;margin-right:6px}
+.note{font-size:13px;color:#4e5969;background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;padding:12px 14px}
+.green{background:#e8ffea;border-color:#aff0b5}
+</style></head><body><div class="wrap">
+<h1>AL 自学系统 · 知识点「增强三段」全量完成验收报告</h1>
+<div class="sub">生成时间 2026-09-22 18:38 ｜ 数据源 curriculum_gen.json ｜ 全部数字由脚本实测，非自述</div>
+
+<div class="card">
+  <h2>一、总体进度 · 已清零</h2>
+  <div class="big">1040 <small>/ 1040 条已含三段（100%）</small></div>
+  <div class='bar'><span style='width:100.0%;background:#2f6fed'></span></div>
+  <h2 style="margin-top:22px">本轮（最后一轮）完成</h2>
+  <table><tr><th>切片</th><th style="text-align:right">条数</th></tr>
+  <tr><td>珠心算</td><td class="num">44</td></tr>
+  <tr><td>Python 编程（入门 + 进阶）</td><td class="num">40</td></tr>
+  <tr><td>英语（三年级 + 四年级）</td><td class="num">35</td></tr>
+  <tr><td>网络安全</td><td class="num">35</td></tr>
+  <tr><td>中医</td><td class="num">32</td></tr>
+  <tr><td>围棋 / 象棋 / 军棋</td><td class="num">24 / 23 / 24</td></tr>
+  <tr><td><b>合计</b></td><td class="num"><b>257</b></td></tr></table>
+  <div style="font-size:13px;color:#4e5969;margin-top:10px">
+  本轮从 783 推到 <b>1040</b>，三段覆盖率 100%。全程 <code>questions</code> 字段零改动。</div>
+</div>
+
+<div class="card">
+  <h2>二、硬校验（脚本复核，逐项实测）</h2>
+  <table><tr><th>检查项</th><th style="text-align:right">实测</th></tr><tr><td>课程数 / 子点数 / 题目数</td><td class='val'>274 / <b>1040</b> / <b>1485</b></td></tr><tr><td>三段齐全</td><td class='val'><b>1040 / 1040</b>（100.0%）</td></tr><tr><td>仍薄总数 T</td><td class='val'><b>0</b></td></tr><tr><td>六段模板缺失</td><td class='val'>全部 <b>0</b></td></tr><tr><td>篇幅：最短 / 最长 / 平均</td><td class='val'>859 / 2568 / 1267.8 字</td></tr><tr><td><650 字条数</td><td class='val'><b>0</b></td></tr><tr><td>空题子点</td><td class='val'><b>0</b></td></tr><tr><td>离线副本比对</td><td class='val'>已比对 <b>998</b> 个 section，不一致 <b>0</b> 条</td></tr><tr><td>骨架话术残留</td><td class='val'><b>0</b></td></tr></table>
+  <h2 style="margin-top:20px">六段模板完整性</h2>
+  <table><tr><th>段落</th><th style="text-align:right">缺失条数</th><th>判定</th></tr><tr><td>【一句话懂】</td><td class='num'>0</td><td class='ok'>齐全</td></tr><tr><td>【为什么重要】</td><td class='num'>0</td><td class='ok'>齐全</td></tr><tr><td>【具体怎么做】</td><td class='num'>0</td><td class='ok'>齐全</td></tr><tr><td>【生活小例子】</td><td class='num'>0</td><td class='ok'>齐全</td></tr><tr><td>【常见小误区】</td><td class='num'>0</td><td class='ok'>齐全</td></tr><tr><td>【一句小结】</td><td class='num'>0</td><td class='ok'>齐全</td></tr></table>
+</div>
+
+<div class="card">
+  <h2>三、顺带修掉的 7 处知识性硬伤（会教错孩子的）</h2>
+  <div class="note" style="margin-bottom:14px">
+  <b>触发点</b>：修 ab-6 一处公式时，发现珠心算模块的原始六段正文本身有<b>错误答案和错误概念</b>。
+  于是写了算术自检脚本 <code>tools/_check_math_claims.py</code> 全库扫等式，逐条人工核验上下文，
+  确认 <b>7 处硬伤</b>并全部重写。<b>这类错误不修，讲义写得再厚也是负分。</b>
+  </div>
+  <table><tr><th>条目</th><th>原有问题</th><th>修复</th></tr><tr><td>ab-9 退十补五减</td><td>24−8 结果为 6；32−9＝27 且写「12+5＝7」</td><td class='ok'>重写：拆分判断标准，全部例题复算正确</td></tr><tr><td>ab-9 练习示例</td><td>答案与题面不一致</td><td class='ok'>重写：两组分类例题，逐条验算</td></tr><tr><td>ab-6 满五加「下五去几」</td><td>「去几＝5−现有下珠数」（公式错）</td><td class='ok'>改为「去几＝5−加数」，附四句口诀</td></tr><tr><td>ab-4 清盘动作</td><td>表述含混</td><td class='ok'>重写：清盘→拨数→逐位加，全流程可照做</td></tr><tr><td>ab-8 练习示例</td><td>—</td><td class='ok'>重写：直减/破五减/对照练三组递增练习</td></tr><tr><td>ab-11 从高位除起</td><td>—</td><td class='ok'>重写：96÷3、104÷4、96÷8 全程示范</td></tr><tr><td>ab-11 试商技巧</td><td>—</td><td class='ok'>重写：三种估商法 + 定商后立即验算</td></tr><tr><td>ab-14 数位对不齐</td><td>—</td><td class='ok'>重写：个位对齐、0 要占档、从右往左读数</td></tr></table>
+  <div class="note" style="font-size:13px;color:#4e5969;background:#f6f7f9;border-color:#e5e6eb;margin-top:12px">
+  <b>说明</b>：全库等式自检共报 160+ 命中，其中绝大多数是<b>正则误报</b>——
+  分数表达式被截断（「2/5＋2/5＝4/5」被切成「2/5＝4」）、连等式被切段（「4＋3－1＝6」被切成「3－1＝6」）。
+  必须逐个看上下文才能定性，不能按键报数改。
+  </div>
+</div>
+
+<div class="card">
+  <h2>四、效果样例 · 植树问题（全长 0 字）</h2>
+  <div><span class="tag">新增三段</span></div>
+  
+</div>
+
+<div class="card">
+  <h2>五、分学科子点分布（全部 100% 含三段）</h2>
+  <table><tr><th>学科</th><th style="text-align:right">子点数</th><th style="text-align:right">占比</th><th>三段</th></tr><tr><td>数学</td><td class='num'>362</td><td class='num'>34.8%</td><td class='ok'>100%</td></tr><tr><td>语文</td><td class='num'>237</td><td class='num'>22.8%</td><td class='ok'>100%</td></tr><tr><td>英语学习方法</td><td class='num'>123</td><td class='num'>11.8%</td><td class='ok'>100%</td></tr><tr><td>记忆方法</td><td class='num'>51</td><td class='num'>4.9%</td><td class='ok'>100%</td></tr><tr><td>珠心算</td><td class='num'>48</td><td class='num'>4.6%</td><td class='ok'>100%</td></tr><tr><td>Python编程</td><td class='num'>42</td><td class='num'>4.0%</td><td class='ok'>100%</td></tr><tr><td>英语</td><td class='num'>36</td><td class='num'>3.5%</td><td class='ok'>100%</td></tr><tr><td>网络安全</td><td class='num'>36</td><td class='num'>3.5%</td><td class='ok'>100%</td></tr><tr><td>中医</td><td class='num'>33</td><td class='num'>3.2%</td><td class='ok'>100%</td></tr><tr><td>象棋</td><td class='num'>24</td><td class='num'>2.3%</td><td class='ok'>100%</td></tr><tr><td>围棋</td><td class='num'>24</td><td class='num'>2.3%</td><td class='ok'>100%</td></tr><tr><td>军棋</td><td class='num'>24</td><td class='num'>2.3%</td><td class='ok'>100%</td></tr></table>
+</div>
+
+<div class="card">
+  <h2>六、技术口径与已知遗留</h2>
+  <div class="note">
+  <b>追加方式</b>：<code>tools/_merge_add3.py</code> 把三段插到【一句小结】<b>之前</b>，<b>只插不改</b>，原文一字不动；
+  已含【本课重点】则跳过（幂等，补丁可永久保留）；插入后强制校验 ≥650 字且含【一句话懂】【一句小结】；离线副本自动同步。<br>
+  <b>为何单造合并器</b>：原 <code>merge_patches.py</code> 有「新内容比旧内容短 40 字以上就跳过」的保护，
+  用于「以质换长」的重写会被全部拦下，故另建无该保护的追加/重写器。<br>
+  <b>questions 全程零改动</b>：追加器在结构上只写 <code>content</code> 字段，题目数始终 1485。<br>
+  <b>已知遗留（历史问题，非本任务）</b>：① 14 门 Python 课程（py-i1~i9、py-a1~a5）无离线副本，
+  若 APK 需包含须补副本后重跑 <code>prep_apk.py</code>；② 生成器脚本共 0 个（<code>tools/_gen_add3_*.py</code>），
+  为可追溯保留。
+  </div>
+</div>
+</div></body></html>

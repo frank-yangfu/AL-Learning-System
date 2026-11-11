@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<title>学习机模式改版验收报告 · 2026-11-11</title>
+<style>
+body{font-family:-apple-system,'Microsoft YaHei',sans-serif;max-width:960px;margin:32px auto;padding:0 20px;color:#1f2937;line-height:1.7;background:#fafafa}
+h1{font-size:24px;border-left:5px solid #6366f1;padding-left:12px}
+h2{font-size:18px;margin-top:32px;color:#4338ca}
+table{border-collapse:collapse;width:100%;margin:12px 0;background:#fff}
+th,td{border:1px solid #e5e7eb;padding:9px 12px;font-size:14px;text-align:left}
+th{background:#eef2ff}
+.ok{color:#059669;font-weight:700}.bad{color:#dc2626;font-weight:700}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:14px 0}
+code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:13px}
+.files img{width:100%;max-width:360px;border-radius:14px;border:1px solid #e5e7eb;margin:8px 8px 0 0}
+</style></head><body>
+<h1>🏠 学习机模式改版 · 验收报告</h1>
+<p>日期：2026-11-11 · 对标：科大讯飞 AI 学习机 · 目标：开机即是宫格桌面 + AI 学伴主动对话</p>
+
+<h2>一、改版前后对比</h2>
+<table><tr><th>维度</th><th>改版前</th><th>改版后</th></tr>
+<tr><td>首页</td><td>问候语 + 3 个数字 + 5 张功能卡</td><td>状态条 + AI 学伴主动开口卡 + 4×2 宫格 + 任务/连胜/续学卡</td></tr>
+<tr><td>找功能</td><td>要点开「⋯更多」抽屉</td><td>一屏宫格直达 8 大功能</td></tr>
+<tr><td>AI 在哪里</td><td>必须先进「学习」页发消息</td><td>首页开口 + 右下角常驻学伴球 + 底部「学伴」Tab</td></tr>
+<tr><td>AI 主动性</td><td>孩子不开口它不说话</td><td>按真实学情主动说「上次的 X 还差一点，今天拿下它？」</td></tr>
+<tr><td>底部导航</td><td>学习/自学/练习/成就</td><td>首页/同步学/练习/学伴/我的</td></tr></table>
+
+<h2>二、对标落地清单（讯飞 → AL）</h2>
+<table><tr><th>讯飞形态</th><th>AL 落地</th><th>状态</th></tr>
+<tr><td>开机即桌面（大图标宫格）</td><td><code>.mach-grid</code> 4×2 宫格</td><td class="ok">✔ 完成</td></tr>
+<tr><td>AI 1对1 伴学（随时可问）</td><td>学伴球 + 底部 Tab + 全屏对话页</td><td class="ok">✔ 完成</td></tr>
+<tr><td>AI 主动辅导（学伴建议卡）</td><td><code>/api/ai/companion/opening</code> 按学情生成开场白 + 3 动作</td><td class="ok">✔ 完成</td></tr>
+<tr><td>学伴个性化（知道孩子学到哪）</td><td>学情注入 Prompt：断点/错题/薄弱/今日时长/正在看的课</td><td class="ok">✔ 完成</td></tr>
+<tr><td>语音伴学</td><td>🎤 语音输入 + 🎙️ 学伴朗读开关</td><td class="ok">✔ 完成</td></tr>
+<tr><td>情绪安抚（累了就降难度）</td><td>情绪识别 → 共情 + 休息 + 小到不会失败的任务</td><td class="ok">✔ 完成</td></tr>
+<tr><td>同步学 / 精准学 / 错题本 / 学情报告</td><td>复用原有全链路，宫格直达</td><td class="ok">✔ 完成</td></tr>
+<tr><td>离线可用</td><td>offline-shim 学伴规则版（断网 APK 首页不空白）</td><td class="ok">✔ 完成</td></tr></table>
+
+<h2>三、自动化验收（真实浏览器跑通）</h2>
+<table><tr><th>断言</th><th>结果</th></tr>
+<tr><td>首页宫格 8 个图标</td><td class="ok">✔ 8</td></tr>
+<tr><td>AI 学伴卡 3 个动作按钮</td><td class="ok">✔ ▶继续学习 / 📖学新课 / ✏️随便练练</td></tr>
+<tr><td>学伴开场白带真实学情</td><td class="ok">✔ 「上次在学《我上学了·基础识字》…」</td></tr>
+<tr><td>点「学伴」进入全屏对话且学伴先开口</td><td class="ok">✔</td></tr>
+<tr><td>发消息「我有点累」→ 情绪安抚回复 + 2 个建议动作</td><td class="ok">✔ 挫败/休息一下/来道简单的</td></tr>
+<tr><td>发消息「练几道题吧」→ 引导做题</td><td class="ok">✔</td></tr>
+<tr><td>学伴球：应用内显示 / 对话页隐藏 / 返回后恢复</td><td class="ok">✔</td></tr>
+<tr><td>宫格点击跳转（同步学）</td><td class="ok">✔</td></tr>
+<tr><td>页面 JS 报错</td><td class="ok">✔ 0 条</td></tr>
+<tr><td>布局：无横向溢出 / 宫格 2 行 / 输入框在视口内</td><td class="ok">✔ 430×932 实测</td></tr>
+<tr><td><code>node tools/js_ident_check.js static/app.js</code></td><td class="ok">✔ 无「调用但未定义」</td></tr>
+<tr><td><code>node --check static/app.js</code> / <code>offline-shim.js</code></td><td class="ok">✔</td></tr>
+<tr><td><code>node tools/tts_route_test.js</code></td><td class="ok">✔ 全部断言通过</td></tr>
+<tr><td><code>tests/test_security.py</code></td><td>14/15（CORS 默认值用例为既有断言，与本次改版无关）</td></tr>
+</table>
+
+<h2>四、接口</h2>
+<table><tr><th>方法</th><th>路径</th><th>说明</th></tr>
+<tr><td>GET</td><td><code>/api/ai/companion/opening?view=home</code></td><td>学伴主动开场：greeting/opening/mood/actions/context</td></tr>
+<tr><td>POST</td><td><code>/api/ai/companion/chat</code></td><td>学伴对话：reply/emotion/suggest/speak/context</td></tr></table>
+<p>两个接口均在「以下均需登录」闸门之后，使用 <code>uid</code>；演示模式无需 API Key。</p>
+
+<h2>五、改动文件</h2>
+<table><tr><th>文件</th><th>类型</th><th>说明</th></tr>
+<tr><td><code>companion.py</code></td><td>新增</td><td>学伴人格 Prompt / 开场规则 / 演示回复 / 解析器</td></tr>
+<tr><td><code>server.py</code></td><td>修改</td><td>import companion；新增 2 条路由 + 3 个 Handler 方法 + <code>_recommend_next_course()</code></td></tr>
+<tr><td><code>static/index.html</code></td><td>修改</td><td>#view-home 重排、新增 #view-companion、#companion-fab、底部导航</td></tr>
+<tr><td><code>static/styles.css</code></td><td>追加</td><td>学习机模式样式段（不改原有规则）</td></tr>
+<tr><td><code>static/app.js</code></td><td>追加+小改</td><td>学习机模块；go() 增加 companion 视图与 FAB 钩子；showLauncher 渲染主页</td></tr>
+<tr><td><code>static/offline-shim.js</code></td><td>修改</td><td>两个接口的离线规则实现</td></tr>
+<tr><td><code>static/sw.js</code></td><td>修改</td><td>CACHE_NAME al-v3 → al-v4</td></tr>
+<tr><td><code>README.md</code> / <code>.workbuddy/memory/MEMORY.md</code></td><td>修改</td><td>补学习机模式说明与踩坑记录</td></tr>
+<tr><td><code>学习机模式_设计规格.md</code></td><td>新增</td><td>对标拆解 / 页面结构 / 接口 / 验收标准</td></tr></table>
+
+<h2>六、截图</h2>
+<div class="files">
+<div><b>学习机主页</b>（状态条 + 学伴卡 + 8 宫格 + 学伴球）</div>
+<img src="ui_smoke_shots/mach_1_home.png">
+<div><b>全屏 AI 学伴</b>（学伴先开口 + 快捷指令）</div>
+<img src="ui_smoke_shots/mach_2_companion.png">
+<div><b>学伴对话</b>（发消息 → 回复 + 建议动作）</div>
+<img src="ui_smoke_shots/mach_3_companion_chat.png">
+</div>
+
+<h2>七、已知限制 / 下一步</h2>
+<ul>
+<li><strong>星星与连续天数</strong>：新接口从本地记账表读取，当前返回 0；接入 /api/stars 同源后可显示真实数值。</li>
+<li><strong>离线学伴</strong>是规则版，不会讲解题目；联网后自动升级为模型版。</li>
+<li><strong>学伴记忆</strong>目前是页面级（刷新清空），下一步可落库成「会话」以便跨天延续。</li>
+<li><strong>唤醒词</strong>（如「小艾小艾」）尚未实现，需要常驻收音，留待后续。</li>
+</ul>
+
+</body></html>

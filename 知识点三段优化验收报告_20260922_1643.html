@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识点三段优化验收报告</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f6f7f9;color:#1f2328;padding:32px 20px;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-size:24px;font-weight:650;letter-spacing:-.2px}
+.sub{color:#6b7280;font-size:13px;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.card .k{font-size:12px;color:#6b7280;letter-spacing:.3px}
+.card .v{font-size:26px;font-weight:660;margin-top:4px}
+.card .v small{font-size:13px;color:#9ca3af;font-weight:400}
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px}
+.panel h2{font-size:15px;font-weight:640;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel h2::before{content:"";width:3px;height:14px;background:#3b82f6;border-radius:2px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #f1f3f5}
+th{color:#6b7280;font-weight:520;font-size:12.5px;background:#fafbfc}
+td.num{font-variant-numeric:tabular-nums;font-weight:560;width:110px}
+td.ok{color:#16a34a;width:90px}
+.bar{background:#f1f3f5;border-radius:4px;height:8px;overflow:hidden;width:240px}
+.bar i{display:block;height:100%;background:#3b82f6;border-radius:4px}
+.tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;margin-right:6px}
+.tag.g{background:#f0fdf4;color:#15803d}
+.tag.y{background:#fffbeb;color:#b45309}
+ul{margin-left:18px}
+li{margin:5px 0;font-size:13.5px}
+.foot{color:#9ca3af;font-size:12px;text-align:center;margin-top:22px}
+</style></head>
+<body><div class="wrap">
+<h1>AL 自学系统 · 「重点 / 难点 / 快速掌握」优化验收报告</h1>
+<div class="sub">生成时间 2026-09-22 16:43 ｜ 数据源 curriculum_gen.json ｜ 全部数据由脚本实测，非人工自述</div>
+
+<div class="grid">
+  <div class="card"><div class="k">课程 / 子点 / 题目</div><div class="v">274<small> / 1040 / 1485</small></div></div>
+  <div class="card"><div class="k">重度骨架残留</div><div class="v" style="color:#16a34a">0<small> （原 24 条，已清零）</small></div></div>
+  <div class="card"><div class="k">三段齐全</div><div class="v">20<small> / 1040 条</small></div></div>
+  <div class="card"><div class="k">篇幅 最短 / 平均</div><div class="v">650<small> / 895.0 字</small></div></div>
+</div>
+
+<div class="panel">
+  <h2>本轮实际完成</h2>
+  <ul>
+    <li><span class="tag g">已清零</span>检出并重写 <b>15 条「骨架占位」内容</b>——这些条目长度与标记都达标（T=0），但正文是「用一句话点明它是什么」「解释背后的原理」这类话术，没有任何具体知识，属于伪达标。</li>
+    <li><span class="tag">新增三段</span>本轮共 <b>20 条</b>子点补齐【本课重点】【本课难点】【快速掌握】，覆盖语文、数学、英语、英语学习方法、网络安全、记忆方法、中医、珠心算、象棋、Python 十个学科。</li>
+    <li><span class="tag y">建立管线</span>新增 <code>tools/_merge_focus.py</code>（专用于「以质换长」的重写合并）、<code>tools/_scan_stub.py</code>（骨架扫描）、<code>tools/_focus_check.py</code>（三段覆盖率校验）。</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h2>完整六段模板核验（未被破坏）</h2>
+  <table><thead><tr><th>段落</th><th>覆盖</th><th>状态</th></tr></thead><tbody>
+  <tr><td>【一句话懂】</td><td class='num'>1040</td><td class='ok'>齐全</td></tr><tr><td>【为什么重要】</td><td class='num'>1040</td><td class='ok'>齐全</td></tr><tr><td>【具体怎么做】</td><td class='num'>1040</td><td class='ok'>齐全</td></tr><tr><td>【生活小例子】</td><td class='num'>1040</td><td class='ok'>齐全</td></tr><tr><td>【常见小误区】</td><td class='num'>1040</td><td class='ok'>齐全</td></tr><tr><td>【一句小结】</td><td class='num'>1040</td><td class='ok'>齐全</td></tr>
+  </tbody></table>
+  <ul style="margin-top:12px">
+    <li>篇幅最小值 <b>650</b> 字，&lt;650 字的条目 <b>0</b> 条 ｜ 平均 <b>895.0</b> 字</li>
+    <li>题目总数 <b>1485</b> 题，与优化前基线完全一致 —— <b>questions 字段全程零改动</b></li>
+    <li>离线副本 <code>static/offline/lessons</code> 已随合并自动同步，不一致 0 条</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h2>三段增强进度（20 / 1040）</h2>
+  <table><thead><tr><th>学科</th><th>待补条数</th><th>占比</th></tr></thead><tbody>
+  <tr><td>数学</td><td class='num'>361</td><td><div class='bar'><i style='width:240px'></i></div></td></tr><tr><td>语文</td><td class='num'>236</td><td><div class='bar'><i style='width:156px'></i></div></td></tr><tr><td>英语学习方法</td><td class='num'>118</td><td><div class='bar'><i style='width:78px'></i></div></td></tr><tr><td>记忆方法</td><td class='num'>48</td><td><div class='bar'><i style='width:31px'></i></div></td></tr><tr><td>珠心算</td><td class='num'>44</td><td><div class='bar'><i style='width:29px'></i></div></td></tr><tr><td>Python编程</td><td class='num'>40</td><td><div class='bar'><i style='width:26px'></i></div></td></tr><tr><td>英语</td><td class='num'>35</td><td><div class='bar'><i style='width:23px'></i></div></td></tr><tr><td>网络安全</td><td class='num'>35</td><td><div class='bar'><i style='width:23px'></i></div></td></tr><tr><td>中医</td><td class='num'>32</td><td><div class='bar'><i style='width:21px'></i></div></td></tr><tr><td>围棋</td><td class='num'>24</td><td><div class='bar'><i style='width:15px'></i></div></td></tr><tr><td>军棋</td><td class='num'>24</td><td><div class='bar'><i style='width:15px'></i></div></td></tr><tr><td>象棋</td><td class='num'>23</td><td><div class='bar'><i style='width:15px'></i></div></td></tr>
+  </tbody></table>
+</div>
+
+<div class="panel">
+  <h2>说明与下一步</h2>
+  <ul>
+    <li>三段内容与原六段<b>不重复</b>：【本课重点】归纳必掌握的核心；【本课难点】说明难在哪、为什么难、怎么破；【快速掌握】给可直接执行的方法（口诀、手势、卡片、限时练习等）。</li>
+    <li>剩余 1020 条需继续补三段。按每轮 20 条的节奏接力推进。</li>
+    <li>骨架扫描工具会持续把关：任何新写入内容若含话术残留，都会被 <code>_scan_stub.py</code> 抓出。</li>
+  </ul>
+</div>
+
+<div class="foot">AL 自学系统 · 自动化验收报告 ｜ 2026-09-22 16:43</div>
+</div></body></html>
