@@ -29,12 +29,21 @@ import asyncio
 import curriculum as C
 import seed_bank as SB
 import companion as COMP
+import curriculum_versions as CV
 # 把本地课程库接到学伴的「本地知识引擎」上：没配大模型 / 断网时，
 # 学伴也能从 637 个知识点的讲义里讲课、从题库里出题判分。
 try:
     COMP.bind_knowledge(C.get_lesson, C.TOPIC_INDEX)
 except Exception:
     pass
+
+# Windows 控制台/管道默认 GBK：启动横幅里的 emoji 会让 print 直接抛
+# UnicodeEncodeError 导致进程退出（服务「莫名起不来」的真根因）。统一按 UTF-8 容错。
+for _io_name in ('stdout', 'stderr'):
+    try:
+        getattr(sys, _io_name).reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -1306,17 +1315,46 @@ asyncio.run(_run())
             self._tts_ping()
             return
 
-        # 内置 K12 课程目录
+        # 📚 教材版本清单（新旧版本分开）
+        if method == "GET" and path == "/api/curriculum/versions":
+            vers = CV.list_versions()
+            for v in vers:
+                _tree = CV.curriculum_for(v["id"])
+                if _tree is None:
+                    _tree = C.CURRICULUM
+                v["topic_count"] = sum(len(g["topics"]) for st in _tree
+                                       for subj in st["subjects"] for g in subj["grades"])
+            self._send_json(200, {
+                "versions": vers,
+                "default": CV.DEFAULT_VERSION,
+                "region": C.REGION,
+            })
+            return
+
+        # 内置 K12 课程目录（支持 ?version=legacy|n24，默认 legacy）
         if method == "GET" and path == "/api/curriculum":
-            data = json.loads(json.dumps(C.CURRICULUM))
+            vid = (query.get("version", [CV.DEFAULT_VERSION])[0] or CV.DEFAULT_VERSION).strip()
+            meta = CV.get_version(vid)
+            tree = CV.curriculum_for(vid)
+            if tree is None:
+                tree = C.CURRICULUM
+            data = json.loads(json.dumps(tree))
             for st in data:
                 for subj in st["subjects"]:
                     if subj.get("name") in ("英语", "English"):
                         subj["lang"] = "en"
+            _vs = CV.list_versions()
+            for _v in _vs:
+                _t = CV.curriculum_for(_v["id"]) or C.CURRICULUM
+                _v["topic_count"] = sum(len(g["topics"]) for _st in _t
+                                       for _sj in _st["subjects"] for g in _sj["grades"])
             self._send_json(200, {
                 "region": C.REGION,
-                "textbook": C.TEXTBOOK,
-                "standard": C.STANDARD,
+                "textbook": meta["textbook"],
+                "standard": meta["standard"],
+                "version": meta["id"],
+                "version_name": meta["name"],
+                "versions": _vs,
                 "curriculum": data,
             })
             return

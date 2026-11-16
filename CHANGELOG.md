@@ -1,5 +1,13 @@
 # 更新日志
 
+## Unreleased — 2026-11-16
+- 新增**新旧教材版本分开**：2024 新课标版课程树（`curriculum_2024.json`：一年级语文 12 课、数学 10 课、道德与法治 4 课）
+- 自学页/课程广场新增「教材版本」下拉切换；版本选择持久记忆
+- 新版知识点 id 带 `n24-` 前缀，与旧版掌握度 / 错题 / 进度天然隔离
+- 新接口：`GET /api/curriculum/versions`、`GET /api/curriculum?version=legacy|n24`
+- 修复：Windows GBK 控制台 emoji 打印导致服务启动即崩（UnicodeEncodeError）
+- 修复：切换教材版本时替换整块容器 DOM，导致讲义区无法再渲染
+
 ## v1.0.0 — 2026-11-11
 
 首个公开版本。

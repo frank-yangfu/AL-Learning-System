@@ -1320,6 +1320,21 @@ except Exception:
     pass
 TOPIC_INDEX = _build_index()
 
+# ----------------------------- 多版本教材（新旧分开） -----------------------------
+# 新版教材的知识点 id 带版本后缀，直接并入同一个索引：
+# get_lesson / course_context / 掌握度 / 错题本 全部按 id 工作，无需改动。
+# 由于 id 与旧版不同，学习进度天然隔离，切换版本不会串数据。
+try:
+    import curriculum_versions as _CV
+    for _vid in _CV.VERSION_INDEX:
+        if _vid == "legacy":
+            continue
+        for _cid, _topic in _CV.build_version_index(TOPIC_INDEX, _vid).items():
+            TOPIC_INDEX[_cid] = _topic
+except Exception as _e:
+    pass
+
+
 # 系统默认导师（user_id=0），面向 K12 学生，无需自建角色即可学习
 SYSTEM_MENTOR = {
     "name": "小艾老师",

@@ -29,6 +29,9 @@
     curriculum: null,
     curMeta: null,
     _courseStage: null,
+    ssVersion: localStorage.getItem("al_ss_version") || "legacy",
+    ssVersions: null,
+    _ssTreeVersion: null,
     // 课后测试（自测模式）：出题→学生独立作答→按正确率+用时评估→未掌握则再学
     testMode: false,
     testQids: [],
@@ -1838,20 +1841,22 @@
     openSelfStudy() {
       // 成就：标记进入过自学页
       if (!state._ssVisited) { state._ssVisited = true; this.checkAchievements(); }
+      // 版本以 localStorage 为权威源重读（避免解析时机/账号绑定导致的读取竞态）
+      try {
+        const v = localStorage.getItem("al_ss_version");
+        if (v && v !== state.ssVersion) state.ssVersion = v;
+      } catch (e) {}
       // 📊 进入自学页先与服务端对一次进度（换设备/清缓存后自动恢复）
       this._ssLoadRemoteProgress();
+      // 课程树若与当前所选版本不一致（如 boot 时按旧版加载过），丢弃后按版本重取
+      if (state._ssTreeVersion && state._ssTreeVersion !== state.ssVersion) {
+        state._ssTree = null; state.curriculum = null; state.curMeta = null; state._ssStage = "";
+      }
       if (!state._ssTree) {
-        if (!state.curriculum) {
-          api("GET", "/api/curriculum").then(res => {
-            state.curriculum = res.curriculum || res;
-            state.curMeta = { region: res.region, textbook: res.textbook, standard: res.standard };
-            this._ssInitTree();
-            this._applySSResumeIfAny();
-          }).catch(e => toast(e.message));
-        } else {
+        this.fetchCurriculum().then(() => {
           this._ssInitTree();
           this._applySSResumeIfAny();
-        }
+        }).catch(e => toast(e.message));
       } else if (!state._ssSeqMode) {
         // 非连续学习模式下，每次进入自学页都重置目录视图，防止学段下拉被隐藏
         this._ssInitTree();
@@ -1895,6 +1900,8 @@
     _ssInitTree() {
       // 防御：连续学习模式可能给 .ss-field 打了 display:none；重新进入目录时务必恢复
       document.querySelectorAll(".ss-field").forEach(e => e.style.display = "");
+      this._ssRenderVersionField();
+      this._ssLoadVersions();
       for (const st of state.curriculum)
         for (const subj of st.subjects)
           for (const g of subj.grades)
@@ -2072,6 +2079,76 @@
       const list = state._ssStageList || state._ssTree || [];
       if (list.length) { state._ssStage = list[0].stage; el("ss-stage").value = state._ssStage; this.onSSStage(); }
     },
+
+    // ---------- 📚 按当前版本加载课程树（统一入口，缓存带版本标记） ----------
+    fetchCurriculum(force) {
+      const vid = state.ssVersion || "legacy";
+      if (!force && state.curriculum && state._ssTreeVersion === vid) {
+        return Promise.resolve(state.curriculum);
+      }
+      return api("GET", "/api/curriculum?version=" + encodeURIComponent(vid)).then(res => {
+        state.curriculum = res.curriculum || res;
+        state.curMeta = { region: res.region, textbook: res.textbook, standard: res.standard, version: res.version };
+        state._ssTreeVersion = res.version || vid;
+        if (res.version) state.ssVersion = res.version;
+        if (Array.isArray(res.versions) && res.versions.length) state.ssVersions = res.versions;
+        for (const st of state.curriculum)
+          for (const subj of st.subjects)
+            for (const g of subj.grades)
+              for (const t of g.topics)
+                if (!t.lang) t.lang = subj.lang || "zh";
+        state._ssTree = null;
+        return state.curriculum;
+      });
+    },
+    // ---------- 📚 教材版本（新旧版本分开，进度天然隔离） ----------
+    _ssRenderVersionField() {
+      const sel = el("ss-version");
+      const note = el("ss-version-note");
+      if (!sel) return;
+      const vf = el("ss-version-field");
+      if (window.AL_OFFLINE && vf) { vf.style.display = "none"; return; }
+      const vs = state.ssVersions;
+      if (!vs) {
+        sel.innerHTML = "<option value=\"legacy\">旧版教材</option>";
+        if (note) note.textContent = "正在读取教材版本…";
+        return;
+      }
+      sel.innerHTML = vs.map(v => `<option value="${esc(v.id)}" ${v.id === state.ssVersion ? "selected" : ""}>${esc(v.short)} · ${esc(v.year)}</option>`).join("");
+      const cur = vs.find(v => v.id === state.ssVersion) || vs[0];
+      if (note) note.textContent = cur ? (cur.topic_count + " 个知识点｜" + cur.textbook) : "";
+      if (sel) sel.title = (cur && cur.note) || "";
+    },
+    async _ssLoadVersions() {
+      if (state.ssVersions || window.AL_OFFLINE) { this._ssRenderVersionField(); return; }
+      try {
+        const r = await api("GET", "/api/curriculum/versions");
+        state.ssVersions = r.versions || [];
+        if (!state.ssVersion) state.ssVersion = r.default || "legacy";
+      } catch (e) {
+        state.ssVersions = [{ id: "legacy", short: "旧版", year: "", topic_count: 0, textbook: "" }];
+      }
+      this._ssRenderVersionField();
+    },
+    onSSVersionChange() {
+      const sel = el("ss-version");
+      const vid = (sel && sel.value) || "legacy";
+      if (vid === state.ssVersion) return;
+      state.ssVersion = vid;
+      localStorage.setItem("al_ss_version", vid);
+      state._ssStage = ""; state._ssGrade = ""; state._ssSubject = ""; state._ssChapterId = "";
+      state._ssLesson = null; state._ssQuiz = null; state._ssSeqMode = false;
+      const vname = ((state.ssVersions || []).find(v => v.id === vid) || {}).short || vid;
+      // 只更新内容区提示：绝不动 .ss-main 的整块 DOM（ss-content/ss-crumb 等要保留）
+      const cont = el("ss-content");
+      if (cont) cont.innerHTML = `<div class="ss-empty">正在切换「${esc(vname)}」教材…</div>`;
+      this.fetchCurriculum(true).then(() => {
+        this._ssInitTree();     // 重建年级/科目/章节下拉，onSSSubject 会自动加载第一课
+        toast("已切换到" + vname + "教材");
+        this._ssRenderVersionField();
+      }).catch(e => { if (cont) cont.innerHTML = '<div class="ss-empty">切换失败：' + esc(e.message) + '</div>'; });
+    },
+
     // ---- 进度（服务端主库 + localStorage 离线缓存，按账号隔离） ----
     // 原来只写 localStorage：换设备 / 清缓存 / 切孩子 / 换浏览器都会「进度归零」。
     // 现在每次写都双写：本地立即可用（离线也行），随后同步到 /api/study/records。
@@ -3057,11 +3134,7 @@
     // ---------- 课程目录 ----------
     async openCourse() {
       try {
-        if (!state.curriculum || !state.curMeta) {
-          const res = await api("GET", "/api/curriculum");
-          state.curriculum = res.curriculum || res;
-          state.curMeta = { region: res.region, textbook: res.textbook, standard: res.standard };
-        }
+        await this.fetchCurriculum();   // 课程广场同样跟随所选教材版本
       } catch (e) { return toast(e.message); }
       // 把学科的语言(lang)继承到每个知识点，便于选课时切换语音语言
       for (const st of state.curriculum)
@@ -3072,7 +3145,7 @@
       if (!state._courseStage) state._courseStage = state.curriculum[0].stage;
       if (state.curMeta) {
         const meta = el("course-meta");
-        meta.textContent = `适配${state.curMeta.region} · 教材版本：${state.curMeta.textbook}`;
+        meta.textContent = `适配${state.curMeta.region} · 教材版本：${state.curMeta.textbook}` + (state.curMeta.version ? `（当前：${esc(((state.ssVersions||[]).find(v=>v.id===state.curMeta.version)||{}).short || state.curMeta.version)}）` : "");
         meta.title = state.curMeta.standard || "";
       }
       this.renderCourseTabs();

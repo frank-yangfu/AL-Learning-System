@@ -457,6 +457,12 @@
                 <span>📚 选择课程</span>
                 <button class="btn ghost tiny" onclick="UI.ssResetSelectors()">重置</button>
               </div>
+              <!-- 📚 教材版本：新旧版本分开，进度按 course_id 天然隔离 -->
+              <div class="ss-field ss-version-field">
+                <label>教材版本</label>
+                <select id="ss-version" onchange="UI.onSSVersionChange()"></select>
+                <div class="ss-version-note" id="ss-version-note"></div>
+              </div>
               <div class="ss-extra" id="ss-extra">
                 <div class="ss-extra-title">🌟 拓展与素养</div>
                 <div class="ss-extra-cards" id="ss-extra-cards"></div>
