@@ -4,6 +4,7 @@ data/*.db-journal
 data/.app_secret
 data/*.json
 child_profile.json
+child_profile.json.tmp
 *.log
 learning.db
 
